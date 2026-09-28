@@ -27,5 +27,13 @@ class AuthNotifierMock extends StateNotifier<AuthState> implements AuthNotifier 
   Future<bool> login(String email, String password) async => true;
 
   @override
+  Future<bool> loginWithGoogle({
+    String? idToken,
+    String? accessToken,
+    String? displayName,
+    String? email,
+  }) async => true;
+
+  @override
   Future<void> logout() async {}
 }

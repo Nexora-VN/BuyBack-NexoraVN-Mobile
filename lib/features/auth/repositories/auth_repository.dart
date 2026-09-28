@@ -43,6 +43,38 @@ class AuthRepository {
     throw Exception('Phản hồi đăng nhập không hợp lệ');
   }
 
+  Future<UserModel> loginWithGoogle({
+    String? idToken,
+    String? accessToken,
+    String? displayName,
+    String? email,
+  }) async {
+    final response = await _client.post(
+      '/auth/google',
+      data: {
+        'idToken': ?idToken,
+        'accessToken': ?accessToken,
+        'displayName': ?displayName,
+        'email': ?email,
+      },
+    );
+
+    if (response is Map<String, dynamic>) {
+      final access = response['accessToken'] as String?;
+      final refresh = response['refreshToken'] as String?;
+      final userJson = response['user'] as Map<String, dynamic>?;
+
+      if (access != null && refresh != null && userJson != null) {
+        final user = UserModel.fromJson(userJson);
+        await _storage.saveTokens(accessToken: access, refreshToken: refresh);
+        await _storage.saveUser(user.toJson());
+        return user;
+      }
+    }
+
+    throw Exception('Phản hồi đăng nhập không hợp lệ');
+  }
+
   Future<UserModel?> getMe() async {
     try {
       final response = await _client.get('/auth/me');

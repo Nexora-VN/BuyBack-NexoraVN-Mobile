@@ -13,3 +13,11 @@
 
 # Flutter Secure Storage
 -keep class androidx.security.crypto.** { *; }
+
+# Suppress Play Core warnings (R8 missing classes)
+-dontwarn com.google.android.play.core.**
+
+# Google Sign In
+-keep class com.google.android.gms.auth.api.signin.** { *; }
+-dontwarn com.google.android.gms.**
+

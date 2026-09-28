@@ -9,6 +9,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/google_logo.dart';
 import '../providers/auth_provider.dart';
+import '../services/google_auth_service.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -74,22 +75,52 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  void _handleGoogleLogin() {
+  Future<void> _handleGoogleLogin() async {
     setState(() => _isGoogleLoading = true);
-    // Google OAuth integration with Clerk/Backend
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) {
+    try {
+      final googleAuth = ref.read(googleAuthServiceProvider);
+      final result = await googleAuth.signIn();
+
+      if (!mounted) return;
+
+      if (result == null) {
+        // User cancelled the prompt
         setState(() => _isGoogleLoading = false);
+        return;
+      }
+
+      final success = await ref.read(authProvider.notifier).loginWithGoogle(
+            idToken: result.idToken,
+            accessToken: result.accessToken,
+            displayName: result.displayName,
+            email: result.email,
+          );
+
+      if (!mounted) return;
+      setState(() => _isGoogleLoading = false);
+
+      if (success) {
+        context.go('/app');
+      } else {
+        final err = ref.read(authProvider).errorMessage ?? 'Đăng nhập Google thất bại';
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Tính năng Đăng nhập với Google qua Clerk đang được đồng bộ. Vui lòng đăng nhập bằng tài khoản hệ thống.',
-            ),
-            backgroundColor: AppColors.primary,
+          SnackBar(
+            content: Text(err),
+            backgroundColor: AppColors.statusDangerBg,
           ),
         );
       }
-    });
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isGoogleLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi đăng nhập Google: $e'),
+            backgroundColor: AppColors.statusDangerBg,
+          ),
+        );
+      }
+    }
   }
 
   @override

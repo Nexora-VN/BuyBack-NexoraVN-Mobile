@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -153,6 +154,48 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
           behavior: SnackBarBehavior.floating,
         ),
       );
+    }
+  }
+
+  Future<void> _openLink(String link) async {
+    final uri = Uri.tryParse(link);
+    if (uri == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Đường dẫn mua hàng không hợp lệ'),
+            backgroundColor: AppColors.statusDangerBg,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    try {
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Không thể mở liên kết mua sắm'),
+            backgroundColor: AppColors.statusDangerBg,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Không thể mở liên kết: $e'),
+            backgroundColor: AppColors.statusDangerBg,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 
@@ -401,18 +444,7 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                       AppButton(
                         text: 'Mua ngay',
                         icon: const Icon(LucideIcons.externalLink, size: 16, color: Colors.white),
-                        onPressed: () async {
-                          await _copyLink(_result!.link!);
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Đã sao chép link mua sắm! Mở sàn để mua ngay.'),
-                                backgroundColor: AppColors.statusSuccessText,
-                                behavior: SnackBarBehavior.floating,
-                              ),
-                            );
-                          }
-                        },
+                        onPressed: () => _openLink(_result!.link!),
                       ),
                       const SizedBox(height: 10),
                       AppButton(
