@@ -55,16 +55,41 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.pageTint,
-      appBar: AppBar(
-        title: const Text('Đơn hàng của bạn'),
-      ),
       body: RefreshIndicator(
         color: AppColors.primary,
         onRefresh: () async {
           ref.invalidate(ordersListProvider(filter));
         },
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Page Heading matching Web 1:1
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Đơn hàng của bạn',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                      letterSpacing: -0.4,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Các đơn hàng của bạn mua qua Piggy sẽ được hiển thị dưới đây nè.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             // Search Input
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

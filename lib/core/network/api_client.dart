@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../config/app_config.dart';
@@ -21,7 +22,6 @@ class ApiClient {
   ApiClient(this._storage) {
     _dio = Dio(
       BaseOptions(
-        baseUrl: AppConfig.baseUrl,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         headers: {
@@ -33,7 +33,6 @@ class ApiClient {
 
     _refreshDio = Dio(
       BaseOptions(
-        baseUrl: AppConfig.baseUrl,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 15),
         headers: {
@@ -94,6 +93,15 @@ class ApiClient {
     );
   }
 
+  String _cleanPath(String path) {
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    final base = AppConfig.baseUrl.replaceAll(RegExp(r'/+$'), '');
+    final p = path.replaceAll(RegExp(r'^/+'), '');
+    return '$base/$p';
+  }
+
   Future<bool> _refreshToken() async {
     if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
       return _refreshCompleter!.future;
@@ -109,7 +117,7 @@ class ApiClient {
       }
 
       final res = await _refreshDio.post(
-        '/auth/refresh',
+        _cleanPath('/auth/refresh'),
         data: {'refreshToken': currentRefreshToken},
       );
 
@@ -158,7 +166,13 @@ class ApiClient {
           error.type == DioExceptionType.receiveTimeout) {
         message = 'Yêu cầu đã hết thời gian chờ.';
         code = 'REQUEST_TIMEOUT';
+      } else if (error.type == DioExceptionType.connectionError) {
+        final uri = error.requestOptions.uri;
+        message = 'Không thể kết nối máy chủ (${uri.host}:${uri.port}). Vui lòng kiểm tra backend hoặc mạng.';
+        code = 'CONNECTION_ERROR';
       }
+
+      debugPrint('[ApiClient] Error: ${error.type} | Status: $statusCode | URI: ${error.requestOptions.uri} | Details: ${error.message}');
 
       return ApiError(
         message: message,
@@ -179,7 +193,7 @@ class ApiClient {
   }) async {
     try {
       final response = await _dio.get(
-        path,
+        _cleanPath(path),
         queryParameters: queryParameters,
         options: options,
       );
@@ -197,7 +211,7 @@ class ApiClient {
   }) async {
     try {
       final response = await _dio.post(
-        path,
+        _cleanPath(path),
         data: data,
         queryParameters: queryParameters,
         options: options,
@@ -216,7 +230,7 @@ class ApiClient {
   }) async {
     try {
       final response = await _dio.patch(
-        path,
+        _cleanPath(path),
         data: data,
         queryParameters: queryParameters,
         options: options,
@@ -235,7 +249,7 @@ class ApiClient {
   }) async {
     try {
       final response = await _dio.delete(
-        path,
+        _cleanPath(path),
         data: data,
         queryParameters: queryParameters,
         options: options,

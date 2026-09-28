@@ -21,28 +21,50 @@ final _ordersNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'orders');
 final _walletNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'wallet');
 final _accountNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'account');
 
+class RouterNotifier extends ChangeNotifier {
+  final Ref _ref;
+
+  RouterNotifier(this._ref) {
+    _ref.listen<AuthState>(
+      authProvider,
+      (_, __) => notifyListeners(),
+    );
+  }
+
+  String? redirect(BuildContext context, GoRouterState state) {
+    final authState = _ref.read(authProvider);
+
+    if (!authState.isInitialChecked) {
+      return null;
+    }
+
+    final isLoggingIn = state.matchedLocation == '/login';
+    if (!authState.isAuthenticated) {
+      return isLoggingIn ? null : '/login';
+    }
+
+    if (isLoggingIn) {
+      return '/app';
+    }
+
+    return null;
+  }
+}
+
+final routerNotifierProvider = Provider<RouterNotifier>((ref) {
+  final notifier = RouterNotifier(ref);
+  ref.onDispose(notifier.dispose);
+  return notifier;
+});
+
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final notifier = ref.watch(routerNotifierProvider);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/app',
-    redirect: (context, state) {
-      if (!authState.isInitialChecked) {
-        return null;
-      }
-
-      final isLoggingIn = state.matchedLocation == '/login';
-      if (!authState.isAuthenticated) {
-        return isLoggingIn ? null : '/login';
-      }
-
-      if (isLoggingIn) {
-        return '/app';
-      }
-
-      return null;
-    },
+    refreshListenable: notifier,
+    redirect: notifier.redirect,
     routes: [
       GoRoute(
         path: '/login',

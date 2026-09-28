@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../constants/app_colors.dart';
+import '../utils/format_utils.dart';
 
 class ProductThumbnail extends StatelessWidget {
   final String? imageUrl;
@@ -19,9 +20,10 @@ class ProductThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final validUrl = imageUrl != null &&
-        imageUrl!.trim().isNotEmpty &&
-        (imageUrl!.startsWith('http://') || imageUrl!.startsWith('https://'));
+    final cleanUrl = FormatUtils.normalizeImageUrl(imageUrl);
+    final validUrl = cleanUrl != null &&
+        cleanUrl.isNotEmpty &&
+        (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://'));
 
     return Container(
       width: size,
@@ -34,7 +36,12 @@ class ProductThumbnail extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: validUrl
           ? CachedNetworkImage(
-              imageUrl: imageUrl!.trim(),
+              imageUrl: cleanUrl,
+              httpHeaders: const {
+                'User-Agent':
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Referer': 'https://shopee.vn/',
+              },
               fit: BoxFit.cover,
               // Downsample image in RAM to prevent memory spikes & scrolling jank
               memCacheWidth: (size * 2).toInt(),

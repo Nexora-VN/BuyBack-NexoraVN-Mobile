@@ -53,4 +53,30 @@ class FormatUtils {
       return isoString;
     }
   }
+
+  /// Normalizes image URL (migrates expired Shopee CDN cf.shopee.vn to down-vn.img.susercontent.com)
+  static String? normalizeImageUrl(String? url) {
+    if (url == null || url.trim().isEmpty) return null;
+    var cleaned = url.trim();
+
+    // Shopee deprecated cf.shopee.vn in favor of down-vn.img.susercontent.com
+    if (cleaned.contains('cf.shopee.vn')) {
+      cleaned = cleaned.replaceAll('cf.shopee.vn', 'down-vn.img.susercontent.com');
+    }
+
+    // Handle relative / hash-only image keys (e.g. "vn-11134207-...")
+    if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
+      if (cleaned.startsWith('//')) {
+        cleaned = 'https:$cleaned';
+      } else {
+        cleaned = 'https://down-vn.img.susercontent.com/file/$cleaned';
+      }
+    }
+
+    if (cleaned.startsWith('http://')) {
+      cleaned = cleaned.replaceFirst('http://', 'https://');
+    }
+
+    return cleaned;
+  }
 }

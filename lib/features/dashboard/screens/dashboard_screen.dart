@@ -9,6 +9,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/product_thumbnail.dart';
 import '../../../core/widgets/stat_card.dart';
 import '../../../core/widgets/status_badge.dart';
+import '../../affiliate/widgets/generate_link_notes.dart';
 import '../../affiliate/widgets/generate_link_panel.dart';
 import '../../finance/models/dashboard_model.dart';
 import '../../finance/models/order_model.dart';
@@ -69,6 +70,8 @@ class DashboardScreen extends ConsumerWidget {
 
               // Quick Link Generator
               const GenerateLinkPanel(),
+              const SizedBox(height: 14),
+              const GenerateLinkNotes(),
               const SizedBox(height: 18),
 
               // Wallet & Bento Overview

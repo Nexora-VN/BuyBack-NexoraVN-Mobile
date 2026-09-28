@@ -20,7 +20,7 @@ class BuyBackApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      title: 'BuyBack NexoraVN',
+      title: 'Piggy Back',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       routerConfig: router,

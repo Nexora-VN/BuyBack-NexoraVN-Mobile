@@ -39,7 +39,7 @@ class _CashbackScreenState extends ConsumerState<CashbackScreen> {
     return Scaffold(
       backgroundColor: AppColors.pageTint,
       appBar: AppBar(
-        title: const Text('Cashback của bạn'),
+        title: const Text('Cashback'),
       ),
       body: RefreshIndicator(
         color: AppColors.primary,
@@ -47,7 +47,19 @@ class _CashbackScreenState extends ConsumerState<CashbackScreen> {
           ref.invalidate(cashbacksListProvider(_selectedStatus));
         },
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+              child: Text(
+                'Hoa hồng chờ trả chỉ là dự kiến. Cashback chỉ khả dụng sau khi xác nhận nhận tiền và hoàn tất kỳ thanh toán.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                  height: 1.4,
+                ),
+              ),
+            ),
             // Status Tabs
             SizedBox(
               height: 44,

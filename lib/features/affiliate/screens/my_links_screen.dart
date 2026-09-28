@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/format_utils.dart';
@@ -53,6 +54,23 @@ class _MyLinksScreenState extends ConsumerState<MyLinksScreen> {
       backgroundColor: AppColors.pageTint,
       appBar: AppBar(
         title: const Text('Link của tôi'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: TextButton.icon(
+              onPressed: () => context.push('/app/links/new'),
+              icon: const Icon(LucideIcons.plus, size: 16, color: AppColors.primary),
+              label: const Text(
+                'Tạo link mới',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         color: AppColors.primary,

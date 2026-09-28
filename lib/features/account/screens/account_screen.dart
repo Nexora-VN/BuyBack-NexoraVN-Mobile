@@ -10,6 +10,7 @@ import '../../../core/widgets/status_badge.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../finance/models/bank_account_model.dart';
 import '../../finance/repositories/finance_repository.dart';
+import '../../finance/widgets/add_bank_account_sheet.dart';
 
 final bankAccountsProvider = FutureProvider.autoDispose<List<BankAccountModel>>((ref) {
   final repo = ref.watch(financeRepositoryProvider);
@@ -18,123 +19,6 @@ final bankAccountsProvider = FutureProvider.autoDispose<List<BankAccountModel>>(
 
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
-
-  void _showAddBankDialog(BuildContext context, WidgetRef ref) {
-    final codeController = TextEditingController();
-    final nameController = TextEditingController();
-    final holderController = TextEditingController();
-    final numberController = TextEditingController();
-    bool isSubmitting = false;
-    String? errorText;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setSheetState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 20,
-                bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Thêm tài khoản ngân hàng',
-                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
-                        ),
-                        IconButton(
-                          icon: const Icon(LucideIcons.x, size: 20),
-                          onPressed: () => Navigator.pop(ctx),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    AppTextField(
-                      controller: codeController,
-                      label: 'Mã ngân hàng (ví dụ: VCB, MB, TCB)',
-                      hintText: 'Nhập mã ngân hàng...',
-                    ),
-                    const SizedBox(height: 12),
-                    AppTextField(
-                      controller: nameController,
-                      label: 'Tên ngân hàng (ví dụ: Vietcombank)',
-                      hintText: 'Nhập tên ngân hàng...',
-                    ),
-                    const SizedBox(height: 12),
-                    AppTextField(
-                      controller: holderController,
-                      label: 'Tên chủ tài khoản (Viết hoa không dấu)',
-                      hintText: 'NGUYEN VAN A',
-                    ),
-                    const SizedBox(height: 12),
-                    AppTextField(
-                      controller: numberController,
-                      label: 'Số tài khoản',
-                      hintText: 'Nhập số tài khoản...',
-                      keyboardType: TextInputType.number,
-                    ),
-                    if (errorText != null) ...[
-                      const SizedBox(height: 10),
-                      Text(errorText!, style: const TextStyle(color: AppColors.statusDangerText, fontSize: 12)),
-                    ],
-                    const SizedBox(height: 20),
-                    AppButton(
-                      text: 'Lưu tài khoản',
-                      isLoading: isSubmitting,
-                      onPressed: () async {
-                        if (codeController.text.trim().isEmpty ||
-                            nameController.text.trim().isEmpty ||
-                            holderController.text.trim().isEmpty ||
-                            numberController.text.trim().isEmpty) {
-                          setSheetState(() => errorText = 'Vui lòng điền đầy đủ các thông tin');
-                          return;
-                        }
-
-                        setSheetState(() {
-                          isSubmitting = true;
-                          errorText = null;
-                        });
-
-                        try {
-                          await ref.read(financeRepositoryProvider).createBankAccount(
-                                bankCode: codeController.text.trim(),
-                                bankName: nameController.text.trim(),
-                                accountHolder: holderController.text.trim().toUpperCase(),
-                                accountNumber: numberController.text.trim(),
-                              );
-                          ref.invalidate(bankAccountsProvider);
-                          if (ctx.mounted) Navigator.pop(ctx);
-                        } catch (e) {
-                          setSheetState(() {
-                            isSubmitting = false;
-                            errorText = e.toString().replaceAll('Exception: ', '');
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   Future<void> _deleteBank(BuildContext context, WidgetRef ref, String id) async {
     final confirm = await showDialog<bool>(
@@ -177,14 +61,36 @@ class AccountScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.pageTint,
-      appBar: AppBar(
-        title: const Text('Tài khoản của bạn'),
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Page Heading matching Web 1:1
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tài khoản của bạn',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.4,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Thông tin cá nhân, liên kết ngân hàng nhận tiền hoàn và cài đặt.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
             // User Card
             AppCard(
               child: Row(
@@ -243,7 +149,11 @@ class AccountScreen extends ConsumerWidget {
                   ),
                 ),
                 TextButton.icon(
-                  onPressed: () => _showAddBankDialog(context, ref),
+                  onPressed: () => showAddBankAccountSheet(
+                    context,
+                    ref,
+                    onSuccess: () => ref.invalidate(bankAccountsProvider),
+                  ),
                   icon: const Icon(LucideIcons.plus, size: 14, color: AppColors.primary),
                   label: const Text(
                     'Thêm mới',
@@ -383,11 +293,9 @@ class AccountScreen extends ConsumerWidget {
               text: 'Đăng xuất',
               icon: const Icon(LucideIcons.logOut, size: 18, color: AppColors.statusDangerText),
               variant: AppButtonVariant.outline,
+              isLoading: authState.isLoading,
               onPressed: () async {
                 await ref.read(authProvider.notifier).logout();
-                if (context.mounted) {
-                  context.go('/login');
-                }
               },
             ),
             const SizedBox(height: 32),

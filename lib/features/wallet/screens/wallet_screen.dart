@@ -32,9 +32,6 @@ class WalletScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.pageTint,
-      appBar: AppBar(
-        title: const Text('Ví của bạn'),
-      ),
       body: RefreshIndicator(
         color: AppColors.primary,
         onRefresh: () async {
@@ -47,6 +44,47 @@ class WalletScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Page Heading matching Web 1:1
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ví của bạn',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textPrimary,
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          'Tổng quan số dư khả dụng, hoa hồng chờ duyệt và lịch sử giao dịch ví.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textSecondary,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  AppButton(
+                    text: 'Yêu cầu rút',
+                    icon: const Icon(LucideIcons.arrowDownToLine, size: 14, color: Colors.white),
+                    height: 38,
+                    onPressed: () => context.push('/app/withdrawals/new'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
               // Balances Overview
               dashboardAsync.when(
                 loading: () => const Center(
@@ -62,13 +100,14 @@ class WalletScreen extends ConsumerWidget {
                   return Column(
                     children: [
                       StatCard(
-                        label: 'Số dư khả dụng có thể rút',
+                        label: 'Bạn có thể rút',
                         value: FormatUtils.formatVnd(dashboard.wallet.available),
                         backgroundColor: AppColors.softSurface.withValues(alpha: 0.6),
                         valueColor: AppColors.primary,
                         action: AppButton(
-                          text: 'Yêu cầu rút tiền',
-                          icon: const Icon(LucideIcons.arrowDownToLine, size: 16, color: Colors.white),
+                          text: 'Rút tiền',
+                          variant: AppButtonVariant.outline,
+                          icon: const Icon(LucideIcons.arrowDownToLine, size: 16, color: AppColors.primary),
                           onPressed: () => context.push('/app/withdrawals/new'),
                         ),
                       ),
@@ -77,17 +116,17 @@ class WalletScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: StatCard(
-                              label: 'Chờ xác nhận',
+                              label: 'Số tiền chờ xác nhận',
                               value: FormatUtils.formatVnd(dashboard.pendingCashback.toString()),
-                              helper: 'Chưa vào ví',
+                              helper: 'Chưa tính vào số dư có thể rút',
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: StatCard(
-                              label: 'Đang giữ để rút',
+                              label: 'Đang giữ cho yêu cầu rút',
                               value: FormatUtils.formatVnd(dashboard.wallet.reserved),
-                              helper: 'Đang xử lý',
+                              helper: 'Đang giữ để xử lý',
                             ),
                           ),
                         ],

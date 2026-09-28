@@ -16,20 +16,11 @@ class AppShell extends StatelessWidget {
         titleSpacing: 16,
         title: Row(
           children: [
-            Container(
+            Image.asset(
+              'assets/images/logo.png',
               width: 36,
               height: 36,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Center(
-                child: Icon(
-                  LucideIcons.walletCards,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              ),
+              fit: BoxFit.contain,
             ),
             const SizedBox(width: 10),
             RichText(

@@ -20,12 +20,14 @@ abstract class AppColors {
 
   // Borders & Dividers
   static const Color borderSubtle = Color(0xFFEEDDE5);
+  static const Color cardBorder = borderSubtle;
   static const Color outline = Color(0xFF8A7177);
   static const Color outlineVariant = Color(0xFFDDBFC6);
 
   // Typography Colors
   static const Color textPrimary = Color(0xFF25181E);
   static const Color textSecondary = Color(0xFF725F68);
+  static const Color textMuted = Color(0xFFA6949D);
   static const Color textDisabled = Color(0xFFA6949D);
   static const Color onPrimary = Color(0xFFFFFFFF);
 

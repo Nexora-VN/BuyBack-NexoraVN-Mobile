@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/format_utils.dart';
@@ -25,6 +26,23 @@ class WithdrawalHistoryScreen extends ConsumerWidget {
       backgroundColor: AppColors.pageTint,
       appBar: AppBar(
         title: const Text('Lịch sử rút tiền'),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: TextButton.icon(
+              onPressed: () => context.push('/app/withdrawals/new'),
+              icon: const Icon(LucideIcons.plus, size: 16, color: AppColors.primary),
+              label: const Text(
+                'Rút tiền',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         color: AppColors.primary,

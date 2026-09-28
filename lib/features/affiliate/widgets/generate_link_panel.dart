@@ -394,16 +394,32 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Actions
-                  Row(
+                  // Actions matching Web 1:1
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
-                        child: AppButton(
-                          text: 'Sao chép link',
-                          icon: const Icon(LucideIcons.copy, size: 16, color: AppColors.primary),
-                          variant: AppButtonVariant.outline,
-                          onPressed: () => _copyLink(_result!.link!),
-                        ),
+                      AppButton(
+                        text: 'Mua ngay',
+                        icon: const Icon(LucideIcons.externalLink, size: 16, color: Colors.white),
+                        onPressed: () async {
+                          await _copyLink(_result!.link!);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Đã sao chép link mua sắm! Mở sàn để mua ngay.'),
+                                backgroundColor: AppColors.statusSuccessText,
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      AppButton(
+                        text: 'Copy link chia sẻ cho bạn bè',
+                        icon: const Icon(LucideIcons.copy, size: 16, color: AppColors.primary),
+                        variant: AppButtonVariant.outline,
+                        onPressed: () => _copyLink(_result!.link!),
                       ),
                     ],
                   ),

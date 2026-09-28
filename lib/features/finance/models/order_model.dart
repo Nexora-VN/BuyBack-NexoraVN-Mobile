@@ -1,3 +1,5 @@
+import '../../../core/utils/format_utils.dart';
+
 class OrderItem {
   final String? name;
   final String? imageUrl;
@@ -14,14 +16,40 @@ class OrderItem {
   });
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
+    final payload = json['payload'] as Map<String, dynamic>? ?? {};
+
+    final rawName = json['itemName'] ??
+        json['item_name'] ??
+        payload['item_name'] ??
+        json['name'] ??
+        json['productName'];
+
+    final rawImage = json['image'] ??
+        json['imageUrl'] ??
+        payload['image'] ??
+        json['productImage'] ??
+        json['product_image'];
+
+    final rawPrice = json['itemPriceRaw'] ??
+        json['actualAmountRaw'] ??
+        json['price'] ??
+        payload['price'] ??
+        json['priceVnd'] ??
+        json['itemPriceVnd'];
+
+    final rawQty = json['qty'] ?? json['quantity'] ?? payload['qty'] ?? 1;
+
+    final rawVariation = json['variation'] ??
+        json['itemModel'] ??
+        payload['item_model'] ??
+        json['modelName'];
+
     return OrderItem(
-      name: json['name']?.toString() ?? json['productName']?.toString(),
-      imageUrl: json['imageUrl']?.toString() ?? json['image']?.toString(),
-      priceVnd: json['priceVnd']?.toString() ?? json['itemPriceVnd']?.toString(),
-      quantity: json['quantity'] is int
-          ? json['quantity'] as int
-          : int.tryParse(json['quantity']?.toString() ?? '1') ?? 1,
-      variation: json['variation']?.toString() ?? json['itemModel']?.toString(),
+      name: rawName?.toString(),
+      imageUrl: FormatUtils.normalizeImageUrl(rawImage?.toString()),
+      priceVnd: rawPrice?.toString(),
+      quantity: rawQty is int ? rawQty : int.tryParse(rawQty.toString()) ?? 1,
+      variation: rawVariation?.toString(),
     );
   }
 }
@@ -70,8 +98,13 @@ class OrderModel {
 
     final pName = productSummary['name']?.toString() ??
         json['productName']?.toString() ??
-        json['orderSn']?.toString() ??
-        'Đơn hàng';
+        (itemsList.isNotEmpty && itemsList.first.name != null
+            ? itemsList.first.name!
+            : (json['orderSn']?.toString() ?? 'Đơn hàng'));
+
+    final rawProductImage = productSummary['imageUrl']?.toString() ??
+        json['imageUrl']?.toString() ??
+        (itemsList.isNotEmpty ? itemsList.first.imageUrl : null);
 
     return OrderModel(
       id: json['id']?.toString() ?? '',
@@ -86,10 +119,11 @@ class OrderModel {
       cashbackState: cashback['state']?.toString(),
       cashbackAmount: cashback['userAmount']?.toString(),
       productName: pName,
-      productImageUrl: productSummary['imageUrl']?.toString() ?? json['imageUrl']?.toString(),
+      productImageUrl: FormatUtils.normalizeImageUrl(rawProductImage),
       itemCount: productSummary['itemCount'] is int
           ? productSummary['itemCount'] as int
-          : int.tryParse(productSummary['itemCount']?.toString() ?? '1') ?? 1,
+          : int.tryParse(productSummary['itemCount']?.toString() ?? '1') ??
+              (itemsList.isNotEmpty ? itemsList.length : 1),
       items: itemsList,
     );
   }

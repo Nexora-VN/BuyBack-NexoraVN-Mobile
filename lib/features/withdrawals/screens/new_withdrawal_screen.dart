@@ -12,6 +12,7 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../finance/models/bank_account_model.dart';
 import '../../finance/models/dashboard_model.dart';
 import '../../finance/repositories/finance_repository.dart';
+import '../../finance/widgets/add_bank_account_sheet.dart';
 
 final withdrawalWalletProvider = FutureProvider.autoDispose<DashboardWallet>((ref) {
   final repo = ref.watch(financeRepositoryProvider);
@@ -151,7 +152,27 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                         const SizedBox(height: 20),
                         AppButton(
                           text: 'Thêm tài khoản ngân hàng',
-                          onPressed: () => context.push('/app/account'),
+                          onPressed: () {
+                            showAddBankAccountSheet(
+                              context,
+                              ref,
+                              onSuccess: () {
+                                ref.invalidate(approvedBanksProvider);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Đã thêm tài khoản ngân hàng thành công. Vui lòng chờ admin duyệt.'),
+                                    backgroundColor: AppColors.primary,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        AppButton(
+                          text: 'Đến Cài đặt tài khoản',
+                          variant: AppButtonVariant.outline,
+                          onPressed: () => context.go('/app/account'),
                         ),
                       ],
                     ),
@@ -331,13 +352,47 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                           const SizedBox(height: 18),
 
                           // Select Bank
-                          const Text(
-                            'Tài khoản ngân hàng nhận tiền',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Tài khoản ngân hàng nhận tiền',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  showAddBankAccountSheet(
+                                    context,
+                                    ref,
+                                    onSuccess: () {
+                                      ref.invalidate(approvedBanksProvider);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Đã thêm tài khoản ngân hàng thành công. Vui lòng chờ admin duyệt.'),
+                                          backgroundColor: AppColors.primary,
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                borderRadius: BorderRadius.circular(4),
+                                child: const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                                  child: Text(
+                                    '+ Thêm mới',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8),
                           Container(
