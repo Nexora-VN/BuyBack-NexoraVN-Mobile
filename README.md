@@ -1,17 +1,49 @@
-# buyback_mobile
+# Piggy Back - Mobile Application
 
-A new Flutter project.
+Ứng dụng Flutter cho nền tảng hoàn tiền Piggy Back.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🚀 Hướng dẫn Build APK Android & Xuất ra Desktop
 
-A few resources to get you started if this is your first Flutter project:
+### 1. Lệnh nhanh (Build Release & tự động copy ra Desktop)
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Chạy lệnh sau tại thư mục `BuyBack-NexoraVN-Mobile`:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter build apk --release && cp build/app/outputs/flutter-apk/app-release.apk ~/Desktop/PiggyBack.apk
+```
+
+Sau khi build xong, file `PiggyBack.apk` sẽ tự động xuất hiện ngay trên **Desktop** của bạn để dễ dàng kéo thả gửi qua Zalo / Telegram / Drive.
+
+---
+
+### 2. Các tùy chọn build khác
+
+#### A. Build APK tách theo kiến trúc chip (Dung lượng nhẹ hơn ~50%)
+```bash
+flutter build apk --release --split-per-abi
+```
+File APK cho từng dòng máy sẽ nằm tại:
+- Máy Android đời mới (phổ biến nhất): `build/app/outputs/flutter-apk/app-arm64-v8a-release.apk`
+- Copy ra Desktop:
+  ```bash
+  cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk ~/Desktop/PiggyBack-arm64.apk
+  ```
+
+#### B. Build chỉ định Server API tùy ý (không cần sửa code)
+Mặc định app đã trỏ tới server mới: `http://14.225.224.82:3001/api/v1`. Nếu muốn đổi endpoint khác:
+```bash
+flutter build apk --release --dart-define=API_BASE_URL=http://14.225.224.82:3001/api/v1 && cp build/app/outputs/flutter-apk/app-release.apk ~/Desktop/PiggyBack.apk
+```
+
+---
+
+## 🛠 Khắc phục sự cố khi build
+
+Nếu gặp lỗi cache hoặc thư viện không đồng bộ, hãy chạy:
+```bash
+flutter clean
+flutter pub get
+flutter build apk --release && cp build/app/outputs/flutter-apk/app-release.apk ~/Desktop/PiggyBack.apk
+```
