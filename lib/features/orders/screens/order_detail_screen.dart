@@ -2,34 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/format_utils.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/cashback_progress_stepper.dart';
 import '../../../core/widgets/product_thumbnail.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../finance/models/order_model.dart';
 import '../../finance/repositories/finance_repository.dart';
 
-final orderDetailFutureProvider = FutureProvider.autoDispose.family<OrderModel, String>((ref, id) {
-  final repo = ref.watch(financeRepositoryProvider);
-  return repo.getOrderDetail(id);
-});
+final orderDetailFutureProvider = FutureProvider.autoDispose
+    .family<OrderModel, String>((ref, id) {
+      final repo = ref.watch(financeRepositoryProvider);
+      return repo.getOrderDetail(id);
+    });
 
 class OrderDetailScreen extends ConsumerWidget {
   final String orderId;
 
   const OrderDetailScreen({super.key, required this.orderId});
 
-  Future<void> _copyText(BuildContext context, String text, String message) async {
-    await Clipboard.setData(ClipboardData(text: text));
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+  Future<void> _copyText(
+    BuildContext context,
+    String text,
+    String message,
+  ) async {
+    try {
+      await Clipboard.setData(ClipboardData(text: text));
+      if (context.mounted) AppFeedback.success(message);
+    } catch (error) {
+      if (context.mounted) {
+        AppFeedback.error(
+          error,
+          fallback: 'Không thể sao chép. Vui lòng thử lại.',
+        );
+      }
     }
   }
 
@@ -39,9 +48,7 @@ class OrderDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.pageTint,
-      appBar: AppBar(
-        title: const Text('Chi tiết đơn hàng'),
-      ),
+      appBar: AppBar(title: const Text('Chi tiết đơn hàng')),
       body: orderAsync.when(
         loading: () => const Center(
           child: CircularProgressIndicator(color: AppColors.primary),
@@ -71,11 +78,17 @@ class OrderDetailScreen extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.orange.shade50,
                               borderRadius: BorderRadius.circular(6),
-                              border: Border.all(color: Colors.orange.shade200, width: 0.5),
+                              border: Border.all(
+                                color: Colors.orange.shade200,
+                                width: 0.5,
+                              ),
                             ),
                             child: Text(
                               order.platform.toUpperCase(),
@@ -86,7 +99,10 @@ class OrderDetailScreen extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          StatusBadge(status: order.status, domain: StatusDomain.order),
+                          StatusBadge(
+                            status: order.status,
+                            domain: StatusDomain.order,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -104,11 +120,19 @@ class OrderDetailScreen extends ConsumerWidget {
                             ),
                           ),
                           InkWell(
-                            onTap: () => _copyText(context, order.orderSn, 'Đã sao chép mã đơn hàng'),
+                            onTap: () => _copyText(
+                              context,
+                              order.orderSn,
+                              'Đã sao chép mã đơn hàng',
+                            ),
                             borderRadius: BorderRadius.circular(6),
                             child: const Padding(
                               padding: EdgeInsets.all(6.0),
-                              child: Icon(LucideIcons.copy, size: 16, color: AppColors.primary),
+                              child: Icon(
+                                LucideIcons.copy,
+                                size: 16,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
                         ],
@@ -152,9 +176,17 @@ class OrderDetailScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 14),
-                      _buildRow('Tổng giá trị đơn hàng', FormatUtils.formatVnd(order.totalAmountVnd)),
+                      _buildRow(
+                        'Tổng giá trị đơn hàng',
+                        FormatUtils.formatVnd(order.totalAmountVnd),
+                      ),
                       const Divider(height: 18),
-                      _buildRow('Trạng thái hoa hồng', order.commissionState, isBadge: true, domain: StatusDomain.commission),
+                      _buildRow(
+                        'Trạng thái hoa hồng',
+                        order.commissionState,
+                        isBadge: true,
+                        domain: StatusDomain.commission,
+                      ),
                       const Divider(height: 18),
                       _buildRow(
                         'Cashback nhận về (85%)',
@@ -200,7 +232,8 @@ class OrderDetailScreen extends ConsumerWidget {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         item.name ?? 'Sản phẩm Shopee',
@@ -224,7 +257,8 @@ class OrderDetailScreen extends ConsumerWidget {
                                       ],
                                       const SizedBox(height: 4),
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             'Số lượng: x${item.quantity}',
@@ -234,7 +268,9 @@ class OrderDetailScreen extends ConsumerWidget {
                                             ),
                                           ),
                                           Text(
-                                            FormatUtils.formatVnd(item.priceVnd),
+                                            FormatUtils.formatVnd(
+                                              item.priceVnd,
+                                            ),
                                             style: const TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w600,
@@ -274,10 +310,7 @@ class OrderDetailScreen extends ConsumerWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 13,
-            color: AppColors.textSecondary,
-          ),
+          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
         ),
         if (isBadge)
           StatusBadge(status: value, domain: domain)
@@ -287,7 +320,9 @@ class OrderDetailScreen extends ConsumerWidget {
             style: TextStyle(
               fontSize: isHighlight ? 15 : 13,
               fontWeight: isHighlight ? FontWeight.w800 : FontWeight.w600,
-              color: isHighlight ? AppColors.statusSuccessText : AppColors.textPrimary,
+              color: isHighlight
+                  ? AppColors.statusSuccessText
+                  : AppColors.textPrimary,
             ),
           ),
       ],

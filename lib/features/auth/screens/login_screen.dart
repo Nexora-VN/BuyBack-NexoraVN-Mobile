@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/app_feedback.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
@@ -52,8 +54,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (password.isEmpty) {
       setState(() => _passwordError = 'Vui lòng nhập mật khẩu');
       valid = false;
-    } else if (password.length < 6) {
-      setState(() => _passwordError = 'Mật khẩu phải có ít nhất 6 ký tự');
+    } else if (password.length < 8) {
+      setState(() => _passwordError = 'Mật khẩu phải có ít nhất 8 ký tự');
       valid = false;
     } else {
       setState(() => _passwordError = null);
@@ -65,12 +67,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _handleLogin() async {
     if (!_validate()) return;
 
-    final success = await ref.read(authProvider.notifier).login(
-          _emailController.text.trim(),
-          _passwordController.text,
-        );
+    final success = await ref
+        .read(authProvider.notifier)
+        .login(_emailController.text.trim(), _passwordController.text);
 
     if (success && mounted) {
+      AppFeedback.success('Đăng nhập thành công');
       context.go('/app');
     }
   }
@@ -89,7 +91,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         return;
       }
 
-      final success = await ref.read(authProvider.notifier).loginWithGoogle(
+      final success = await ref
+          .read(authProvider.notifier)
+          .loginWithGoogle(
             idToken: result.idToken,
             accessToken: result.accessToken,
             displayName: result.displayName,
@@ -100,24 +104,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       setState(() => _isGoogleLoading = false);
 
       if (success) {
+        AppFeedback.success('Đăng nhập thành công');
         context.go('/app');
       } else {
-        final err = ref.read(authProvider).errorMessage ?? 'Đăng nhập Google thất bại';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(err),
-            backgroundColor: AppColors.statusDangerBg,
-          ),
-        );
+        AppFeedback.failure('Đăng nhập Google thất bại. Vui lòng thử lại.');
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isGoogleLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Lỗi đăng nhập Google: $e'),
-            backgroundColor: AppColors.statusDangerBg,
-          ),
+        AppFeedback.error(
+          e,
+          fallback: 'Đăng nhập Google thất bại. Vui lòng thử lại.',
         );
       }
     }
@@ -132,7 +129,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 24.0,
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
               child: Column(
@@ -180,14 +180,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       children: [
                         // Google Sign-In Button matching FE 1:1
                         InkWell(
-                          onTap: (authState.isLoading || _isGoogleLoading) ? null : _handleGoogleLogin,
+                          onTap: (authState.isLoading || _isGoogleLoading)
+                              ? null
+                              : _handleGoogleLogin,
                           borderRadius: AppDimensions.roundedControl,
                           child: Container(
                             height: 48,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: AppDimensions.roundedControl,
-                              border: Border.all(color: AppColors.cardBorder, width: 1.2),
+                              border: Border.all(
+                                color: AppColors.cardBorder,
+                                width: 1.2,
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.03),
@@ -205,7 +210,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     height: 18,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        AppColors.primary,
+                                      ),
                                     ),
                                   )
                                 else
@@ -229,10 +236,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Row(
                           children: [
                             const Expanded(
-                              child: Divider(color: AppColors.cardBorder, thickness: 1),
+                              child: Divider(
+                                color: AppColors.cardBorder,
+                                thickness: 1,
+                              ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10.0,
+                              ),
                               child: Text(
                                 'hoặc tài khoản hệ thống'.toUpperCase(),
                                 style: const TextStyle(
@@ -244,7 +256,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                             ),
                             const Expanded(
-                              child: Divider(color: AppColors.cardBorder, thickness: 1),
+                              child: Divider(
+                                color: AppColors.cardBorder,
+                                thickness: 1,
+                              ),
                             ),
                           ],
                         ),
@@ -281,11 +296,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword ? LucideIcons.eye : LucideIcons.eyeOff,
+                              _obscurePassword
+                                  ? LucideIcons.eye
+                                  : LucideIcons.eyeOff,
                               size: 18,
                               color: AppColors.textSecondary,
                             ),
-                            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            onPressed: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -302,7 +321,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(4),
                                 ),
-                                onChanged: (val) => setState(() => _rememberMe = val ?? true),
+                                onChanged: (val) =>
+                                    setState(() => _rememberMe = val ?? true),
                               ),
                             ),
                             const SizedBox(width: 8),

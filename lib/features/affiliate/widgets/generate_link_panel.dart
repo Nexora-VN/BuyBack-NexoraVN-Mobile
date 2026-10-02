@@ -3,11 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/utils/format_utils.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/product_thumbnail.dart';
 import '../models/generate_link_model.dart';
@@ -43,33 +45,22 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
   }
 
   Future<void> _handlePaste() async {
-    final data = await Clipboard.getData(Clipboard.kTextPlain);
-    final text = data?.text?.trim();
-    if (text != null && text.isNotEmpty) {
+    try {
+      final data = await Clipboard.getData(Clipboard.kTextPlain);
+      if (!mounted) return;
+      final text = data?.text?.trim();
+      if (text == null || text.isEmpty) {
+        AppFeedback.failure('Bộ nhớ tạm đang trống');
+        return;
+      }
       _urlController.text = text;
       setState(() {
         _formError = null;
         _apiError = null;
       });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Đã dán từ clipboard'),
-            duration: Duration(seconds: 1),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Bộ nhớ tạm đang trống'),
-            duration: Duration(seconds: 1),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      AppFeedback.success('Đã dán từ clipboard');
+    } catch (error) {
+      AppFeedback.error(error, fallback: 'Không thể truy cập bộ nhớ tạm');
     }
   }
 
@@ -96,7 +87,9 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
       }
 
       final host = uri.host.toLowerCase();
-      final isShopee = _shopeeHosts.any((h) => host == h || host.endsWith('.$h'));
+      final isShopee = _shopeeHosts.any(
+        (h) => host == h || host.endsWith('.$h'),
+      );
       final isTiktok = host.contains('tiktok.com');
 
       if (!isShopee && !isTiktok) {
@@ -113,6 +106,7 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
   }
 
   Future<void> _generate() async {
+    if (_isLoading) return;
     final input = _urlController.text.trim();
     if (!_validate(input)) return;
 
@@ -123,36 +117,35 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
     });
 
     try {
-      final response = await ref.read(affiliateRepositoryProvider).generate(input);
+      final response = await ref
+          .read(affiliateRepositoryProvider)
+          .generate(input);
+      if (!mounted) return;
       setState(() {
         _result = response;
         _isLoading = false;
       });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tạo link cashback thành công!'),
-            backgroundColor: AppColors.statusSuccessText,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      AppFeedback.success('Tạo link cashback thành công');
     } catch (e) {
+      if (!mounted) return;
       setState(() {
-        _apiError = e.toString().replaceAll('Exception: ', '');
+        _apiError = AppFeedback.messageFor(
+          e,
+          fallback: 'Tạo link thất bại. Vui lòng thử lại.',
+        );
         _isLoading = false;
       });
     }
   }
 
   Future<void> _copyLink(String link) async {
-    await Clipboard.setData(ClipboardData(text: link));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Đã sao chép link chia sẻ vào bộ nhớ tạm'),
-          behavior: SnackBarBehavior.floating,
-        ),
+    try {
+      await Clipboard.setData(ClipboardData(text: link));
+      AppFeedback.success('Đã sao chép link chia sẻ');
+    } catch (error) {
+      AppFeedback.error(
+        error,
+        fallback: 'Không thể sao chép link. Vui lòng thử lại.',
       );
     }
   }
@@ -160,15 +153,7 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
   Future<void> _openLink(String link) async {
     final uri = Uri.tryParse(link);
     if (uri == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Đường dẫn mua hàng không hợp lệ'),
-            backgroundColor: AppColors.statusDangerBg,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      AppFeedback.failure('Đường dẫn mua hàng không hợp lệ');
       return;
     }
 
@@ -178,24 +163,10 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
         mode: LaunchMode.externalApplication,
       );
       if (!launched && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Không thể mở liên kết mua sắm'),
-            backgroundColor: AppColors.statusDangerBg,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        AppFeedback.failure('Không thể mở liên kết mua sắm');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Không thể mở liên kết: $e'),
-            backgroundColor: AppColors.statusDangerBg,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+      AppFeedback.error(e, fallback: 'Không thể mở liên kết mua sắm');
     }
   }
 
@@ -246,7 +217,11 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
               children: [
                 if (_urlController.text.isNotEmpty)
                   IconButton(
-                    icon: const Icon(LucideIcons.xCircle, size: 18, color: AppColors.textDisabled),
+                    icon: const Icon(
+                      LucideIcons.xCircle,
+                      size: 18,
+                      color: AppColors.textDisabled,
+                    ),
                     onPressed: _handleClear,
                   ),
                 Padding(
@@ -255,7 +230,10 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                     onTap: _handlePaste,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.softSurface,
                         borderRadius: BorderRadius.circular(8),
@@ -263,7 +241,11 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(LucideIcons.clipboardPaste, size: 14, color: AppColors.primary),
+                          Icon(
+                            LucideIcons.clipboardPaste,
+                            size: 14,
+                            color: AppColors.primary,
+                          ),
                           SizedBox(width: 4),
                           Text(
                             'Dán',
@@ -329,7 +311,11 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                 children: [
                   const Row(
                     children: [
-                      Icon(LucideIcons.checkCircle2, size: 18, color: AppColors.statusSuccessText),
+                      Icon(
+                        LucideIcons.checkCircle2,
+                        size: 18,
+                        color: AppColors.statusSuccessText,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         'Piggy mang tới tin tốt cho bạn',
@@ -443,13 +429,21 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                     children: [
                       AppButton(
                         text: 'Mua ngay',
-                        icon: const Icon(LucideIcons.externalLink, size: 16, color: Colors.white),
+                        icon: const Icon(
+                          LucideIcons.externalLink,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                         onPressed: () => _openLink(_result!.link!),
                       ),
                       const SizedBox(height: 10),
                       AppButton(
                         text: 'Copy link chia sẻ cho bạn bè',
-                        icon: const Icon(LucideIcons.copy, size: 16, color: AppColors.primary),
+                        icon: const Icon(
+                          LucideIcons.copy,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
                         variant: AppButtonVariant.outline,
                         onPressed: () => _copyLink(_result!.link!),
                       ),

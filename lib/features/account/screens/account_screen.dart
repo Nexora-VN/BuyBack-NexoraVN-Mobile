@@ -2,29 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../finance/models/bank_account_model.dart';
 import '../../finance/repositories/finance_repository.dart';
 import '../../finance/widgets/add_bank_account_sheet.dart';
 
-final bankAccountsProvider = FutureProvider.autoDispose<List<BankAccountModel>>((ref) {
-  final repo = ref.watch(financeRepositoryProvider);
-  return repo.getBankAccounts();
-});
+final bankAccountsProvider = FutureProvider.autoDispose<List<BankAccountModel>>(
+  (ref) {
+    final repo = ref.watch(financeRepositoryProvider);
+    return repo.getBankAccounts();
+  },
+);
 
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
 
-  Future<void> _deleteBank(BuildContext context, WidgetRef ref, String id) async {
+  Future<void> _deleteBank(
+    BuildContext context,
+    WidgetRef ref,
+    String id,
+  ) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Gỡ tài khoản ngân hàng?'),
-        content: const Text('Bạn có chắc chắn muốn gỡ tài khoản này? Các yêu cầu rút tiền đã tạo trước đó vẫn giữ nguyên thông tin.'),
+        content: const Text(
+          'Bạn có chắc chắn muốn gỡ tài khoản này? Các yêu cầu rút tiền đã tạo trước đó vẫn giữ nguyên thông tin.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -32,7 +42,9 @@ class AccountScreen extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.statusDangerText),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.statusDangerText,
+            ),
             child: const Text('Gỡ tài khoản'),
           ),
         ],
@@ -43,12 +55,12 @@ class AccountScreen extends ConsumerWidget {
       try {
         await ref.read(financeRepositoryProvider).deleteBankAccount(id);
         ref.invalidate(bankAccountsProvider);
+        AppFeedback.success('Đã gỡ tài khoản ngân hàng');
       } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Lỗi: $e')),
-          );
-        }
+        AppFeedback.error(
+          e,
+          fallback: 'Không thể gỡ tài khoản. Vui lòng thử lại.',
+        );
       }
     }
   }
@@ -102,7 +114,11 @@ class AccountScreen extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: const Center(
-                      child: Icon(LucideIcons.user, size: 24, color: AppColors.primary),
+                      child: Icon(
+                        LucideIcons.user,
+                        size: 24,
+                        color: AppColors.primary,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -153,7 +169,11 @@ class AccountScreen extends ConsumerWidget {
                     ref,
                     onSuccess: () => ref.invalidate(bankAccountsProvider),
                   ),
-                  icon: const Icon(LucideIcons.plus, size: 14, color: AppColors.primary),
+                  icon: const Icon(
+                    LucideIcons.plus,
+                    size: 14,
+                    color: AppColors.primary,
+                  ),
                   label: const Text(
                     'Thêm mới',
                     style: TextStyle(
@@ -176,16 +196,36 @@ class AccountScreen extends ConsumerWidget {
                 ),
               ),
               error: (err, _) => AppCard(
-                child: Text('Lỗi: $err', style: const TextStyle(color: AppColors.statusDangerText)),
+                child: Column(
+                  children: [
+                    Text(
+                      AppFeedback.messageFor(
+                        err,
+                        fallback: 'Không thể tải tài khoản ngân hàng.',
+                      ),
+                      style: const TextStyle(color: AppColors.statusDangerText),
+                    ),
+                    TextButton(
+                      onPressed: () => ref.invalidate(bankAccountsProvider),
+                      child: const Text('Thử lại'),
+                    ),
+                  ],
+                ),
               ),
               data: (banks) {
                 if (banks.isEmpty) {
                   return AppCard(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 20,
+                    ),
                     child: Center(
                       child: Text(
                         'Bạn chưa thêm tài khoản ngân hàng nào. Bấm "Thêm mới" để liên kết tài khoản nhận tiền rút nha!',
-                        style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -200,60 +240,95 @@ class AccountScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final bank = banks[index];
                     return AppCard(
-                      child: Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: AppColors.softSurface,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(LucideIcons.landmark, size: 20, color: AppColors.primary),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: AppColors.softSurface,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(
+                                  LucideIcons.landmark,
+                                  size: 20,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: Text(
-                                        bank.bankName,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                          color: AppColors.textPrimary,
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            bank.bankName,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w700,
+                                              color: AppColors.textPrimary,
+                                            ),
+                                          ),
                                         ),
+                                        StatusBadge(
+                                          status: bank.status,
+                                          domain: StatusDomain.bank,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${bank.accountHolder} • •••• ${bank.lastFour}',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.textSecondary,
                                       ),
                                     ),
-                                    StatusBadge(status: bank.status, domain: StatusDomain.bank),
+                                    if (bank.reviewReason != null &&
+                                        bank.reviewReason!.isNotEmpty) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        bank.reviewReason!,
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          color: AppColors.statusDangerText,
+                                        ),
+                                      ),
+                                    ],
                                   ],
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '${bank.accountHolder} • •••• ${bank.lastFour}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textSecondary,
-                                  ),
-                                ),
-                                if (bank.reviewReason != null && bank.reviewReason!.isNotEmpty) ...[
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    bank.reviewReason!,
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.statusDangerText,
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: const Icon(LucideIcons.trash2, size: 18, color: AppColors.textDisabled),
-                            onPressed: () => _deleteBank(context, ref, bank.id),
+                          const Divider(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton.icon(
+                                onPressed: () => showAddBankAccountSheet(
+                                  context,
+                                  ref,
+                                  bank: bank,
+                                  onSuccess: () =>
+                                      ref.invalidate(bankAccountsProvider),
+                                ),
+                                icon: const Icon(LucideIcons.pencil, size: 16),
+                                label: const Text('Sửa'),
+                              ),
+                              TextButton.icon(
+                                onPressed: () =>
+                                    _deleteBank(context, ref, bank.id),
+                                icon: const Icon(LucideIcons.trash2, size: 16),
+                                label: const Text('Gỡ'),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: AppColors.statusDangerText,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -270,17 +345,24 @@ class AccountScreen extends ConsumerWidget {
               child: Column(
                 children: [
                   ListTile(
-                    leading: const Icon(LucideIcons.link2, size: 20, color: AppColors.primary),
-                    title: const Text('Link của tôi', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                    trailing: const Icon(LucideIcons.chevronRight, size: 18, color: AppColors.textDisabled),
+                    leading: const Icon(
+                      LucideIcons.link2,
+                      size: 20,
+                      color: AppColors.primary,
+                    ),
+                    title: const Text(
+                      'Link của tôi',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    trailing: const Icon(
+                      LucideIcons.chevronRight,
+                      size: 18,
+                      color: AppColors.textDisabled,
+                    ),
                     onTap: () => context.push('/app/links'),
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(LucideIcons.shieldCheck, size: 20, color: AppColors.primary),
-                    title: const Text('Điều khoản & Chính sách', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                    trailing: const Icon(LucideIcons.chevronRight, size: 18, color: AppColors.textDisabled),
-                    onTap: () {},
                   ),
                 ],
               ),
@@ -290,11 +372,23 @@ class AccountScreen extends ConsumerWidget {
             // Logout Button
             AppButton(
               text: 'Đăng xuất',
-              icon: const Icon(LucideIcons.logOut, size: 18, color: AppColors.statusDangerText),
+              icon: const Icon(
+                LucideIcons.logOut,
+                size: 18,
+                color: AppColors.statusDangerText,
+              ),
               variant: AppButtonVariant.outline,
               isLoading: authState.isLoading,
               onPressed: () async {
-                await ref.read(authProvider.notifier).logout();
+                try {
+                  await ref.read(authProvider.notifier).logout();
+                  AppFeedback.success('Đã đăng xuất');
+                } catch (error) {
+                  AppFeedback.error(
+                    error,
+                    fallback: 'Không thể đăng xuất. Vui lòng thử lại.',
+                  );
+                }
               },
             ),
             const SizedBox(height: 32),

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/network/api_client.dart';
 import '../models/bank_account_model.dart';
 import '../models/cashback_model.dart';
@@ -32,10 +33,7 @@ class FinanceRepository {
     String? query,
     String? sort = 'desc',
   }) async {
-    final queryParams = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+    final queryParams = <String, dynamic>{'page': page, 'limit': limit};
     if (status != null && status.isNotEmpty) queryParams['status'] = status;
     if (query != null && query.isNotEmpty) queryParams['search'] = query;
     if (sort != null) queryParams['sort'] = sort;
@@ -68,10 +66,7 @@ class FinanceRepository {
     String? query,
     String? sort = 'desc',
   }) async {
-    final queryParams = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+    final queryParams = <String, dynamic>{'page': page, 'limit': limit};
     if (status != null && status.isNotEmpty) queryParams['status'] = status;
     if (query != null && query.isNotEmpty) queryParams['search'] = query;
     if (sort != null) queryParams['sort'] = sort;
@@ -103,10 +98,7 @@ class FinanceRepository {
     String? query,
     String? sort = 'desc',
   }) async {
-    final queryParams = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+    final queryParams = <String, dynamic>{'page': page, 'limit': limit};
     if (query != null && query.isNotEmpty) queryParams['search'] = query;
     if (sort != null) queryParams['sort'] = sort;
 
@@ -117,7 +109,9 @@ class FinanceRepository {
 
     if (response is Map<String, dynamic> && response['data'] is List) {
       return (response['data'] as List)
-          .map((e) => WalletTransactionModel.fromJson(e as Map<String, dynamic>))
+          .map(
+            (e) => WalletTransactionModel.fromJson(e as Map<String, dynamic>),
+          )
           .toList();
     }
     return [];
@@ -130,10 +124,7 @@ class FinanceRepository {
     String? query,
     String? sort = 'desc',
   }) async {
-    final queryParams = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+    final queryParams = <String, dynamic>{'page': page, 'limit': limit};
     if (status != null && status.isNotEmpty) queryParams['status'] = status;
     if (query != null && query.isNotEmpty) queryParams['search'] = query;
     if (sort != null) queryParams['sort'] = sort;
@@ -207,6 +198,7 @@ class FinanceRepository {
     required String bankCode,
     required String bankName,
     required String accountHolder,
+    required String accountNumber,
   }) async {
     await _client.patch(
       '/me/bank-accounts/$id',
@@ -214,6 +206,7 @@ class FinanceRepository {
         'bankCode': bankCode,
         'bankName': bankName,
         'accountHolder': accountHolder,
+        'accountNumber': accountNumber,
       },
     );
   }
