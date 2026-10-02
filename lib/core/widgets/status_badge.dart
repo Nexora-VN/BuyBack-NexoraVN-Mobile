@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
 
@@ -16,11 +17,13 @@ enum StatusDomain {
 class StatusBadge extends StatelessWidget {
   final String status;
   final StatusDomain domain;
+  final String? labelOverride;
 
   const StatusBadge({
     super.key,
     required this.status,
     this.domain = StatusDomain.general,
+    this.labelOverride,
   });
 
   static const Map<String, String> _labels = {
@@ -89,21 +92,23 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = label;
+    final text = labelOverride ?? label;
 
     Color textColor;
     Color bgColor;
     IconData icon;
 
     // 1. Blue (info): Withdrawn / Paid
-    final isWithdrawn = ['PAID', 'WITHDRAWN'].contains(status) ||
+    final isWithdrawn =
+        ['PAID', 'WITHDRAWN'].contains(status) ||
         text == 'Đã rút tiền' ||
         text == 'Đã chuyển tiền' ||
         text == 'Đã quyết toán' ||
         (domain == StatusDomain.withdrawal && status == 'COMPLETED');
 
     // 2. Red (danger): Failed / Rejected / Cancelled
-    final isFailed = [
+    final isFailed =
+        [
           'REJECTED',
           'FAILED',
           'REVERSED',
@@ -118,7 +123,8 @@ class StatusBadge extends StatelessWidget {
         text == 'Chuyển thất bại';
 
     // 3. Green (success): Validated / Available / Approved
-    final isSuccess = !isWithdrawn &&
+    final isSuccess =
+        !isWithdrawn &&
         ([
               'ACTIVE',
               'WORKING',
@@ -133,7 +139,8 @@ class StatusBadge extends StatelessWidget {
             text == 'Hoa hồng đã xác thực');
 
     // 4. Purple (Review / Mismatch)
-    final isReview = ['MANUAL_REVIEW', 'MISMATCH'].contains(status) ||
+    final isReview =
+        ['MANUAL_REVIEW', 'MISMATCH'].contains(status) ||
         text == 'Cần đối chiếu';
 
     if (isWithdrawn) {

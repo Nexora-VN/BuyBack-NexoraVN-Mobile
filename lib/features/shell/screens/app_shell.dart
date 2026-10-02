@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../../../core/constants/app_colors.dart';
 
 class AppShell extends StatelessWidget {
@@ -10,6 +11,7 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isVietnamese = Localizations.localeOf(context).languageCode == 'vi';
     return Scaffold(
       backgroundColor: AppColors.pageTint,
       appBar: AppBar(
@@ -79,10 +81,26 @@ class AppShell extends StatelessWidget {
             height: 60,
             child: Row(
               children: [
-                _buildNavItem(0, LucideIcons.home, 'Trang chủ'),
-                _buildNavItem(1, LucideIcons.clipboardList, 'Đơn hàng'),
-                _buildNavItem(2, LucideIcons.walletCards, 'Ví'),
-                _buildNavItem(3, LucideIcons.user, 'Tài khoản'),
+                _buildNavItem(
+                  0,
+                  LucideIcons.home,
+                  isVietnamese ? 'Trang chủ' : 'Home',
+                ),
+                _buildNavItem(
+                  1,
+                  LucideIcons.clipboardList,
+                  isVietnamese ? 'Đơn hàng' : 'Orders',
+                ),
+                _buildNavItem(
+                  2,
+                  LucideIcons.walletCards,
+                  isVietnamese ? 'Ví' : 'Wallet',
+                ),
+                _buildNavItem(
+                  3,
+                  LucideIcons.user,
+                  isVietnamese ? 'Tài khoản' : 'Account',
+                ),
               ],
             ),
           ),
@@ -118,6 +136,8 @@ class AppShell extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
