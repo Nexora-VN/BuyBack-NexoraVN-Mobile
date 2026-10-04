@@ -7,8 +7,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/format_utils.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_skeleton.dart';
 import '../../../core/widgets/empty_state_widget.dart';
-import '../../../core/widgets/stat_card.dart';
 import '../../finance/models/dashboard_model.dart';
 import '../../finance/models/wallet_transaction_model.dart';
 import '../../finance/repositories/finance_repository.dart';
@@ -135,11 +135,29 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
 
               // Balances Overview
               dashboardAsync.when(
-                loading: () => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(20),
-                    child: CircularProgressIndicator(color: AppColors.primary),
-                  ),
+                loading: () => const AppSkeletonCard(
+                  children: [
+                    Row(
+                      children: [
+                        AppSkeletonBlock(height: 46, width: 46, radius: 13),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppSkeletonBlock(height: 12, width: 96),
+                              SizedBox(height: 8),
+                              AppSkeletonBlock(height: 26, width: 140),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 18),
+                    AppSkeletonBlock(height: 13, width: 190),
+                    SizedBox(height: 10),
+                    AppSkeletonBlock(height: 13, width: 160),
+                  ],
                 ),
                 error: (_, _) => AppCard(
                   child: Text(
@@ -151,61 +169,119 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                   ),
                 ),
                 data: (dashboard) {
-                  return Column(
-                    children: [
-                      StatCard(
-                        label: copy.text(
-                          'Bạn có thể rút',
-                          'Available to withdraw',
+                  return AppCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 46,
+                              height: 46,
+                              decoration: BoxDecoration(
+                                color: AppColors.softSurface,
+                                borderRadius: BorderRadius.circular(13),
+                              ),
+                              child: const Icon(
+                                LucideIcons.walletCards,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    copy.text(
+                                      'Bạn có thể rút',
+                                      'Available to withdraw',
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                  Text(
+                                    FormatUtils.formatVnd(
+                                      dashboard.wallet.available,
+                                    ),
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        value: FormatUtils.formatVnd(
-                          dashboard.wallet.available,
+                        const SizedBox(height: 15),
+                        const Divider(height: 1, color: Color(0xFFF5E7EB)),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Icon(
+                              LucideIcons.clock3,
+                              size: 16,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                copy.text('Chờ xác nhận', 'Pending cashback'),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              FormatUtils.formatVnd(
+                                dashboard.pendingCashback.toString(),
+                              ),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
                         ),
-                        backgroundColor: AppColors.softSurface.withValues(
-                          alpha: 0.6,
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Icon(
+                              LucideIcons.lockKeyhole,
+                              size: 16,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                copy.text(
+                                  'Đang giữ để rút',
+                                  'Held for withdrawal',
+                                ),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              FormatUtils.formatVnd(dashboard.wallet.reserved),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ],
                         ),
-                        valueColor: AppColors.primary,
-                        action: AppButton(
-                          text: copy.text('Rút tiền', 'Withdraw'),
-                          variant: AppButtonVariant.outline,
-                          icon: const Icon(
-                            LucideIcons.arrowDownToLine,
-                            size: 16,
-                            color: AppColors.primary,
-                          ),
-                          onPressed: () => context.push('/app/withdrawals/new'),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Column(
-                        children: [
-                          StatCard(
-                            label: copy.text(
-                              'Số tiền chờ xác nhận',
-                              'Pending cashback',
-                            ),
-                            value: FormatUtils.formatVnd(
-                              dashboard.pendingCashback.toString(),
-                            ),
-                            helper: copy.text(
-                              'Chưa thể rút',
-                              'Not yet withdrawable',
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          StatCard(
-                            label: copy.text(
-                              'Đang giữ cho yêu cầu rút',
-                              'Held for withdrawal',
-                            ),
-                            value: FormatUtils.formatVnd(
-                              dashboard.wallet.reserved,
-                            ),
-                            helper: copy.text('Đang xử lý', 'Processing'),
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   );
                 },
               ),
@@ -260,12 +336,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
               const SizedBox(height: 10),
 
               transactionsAsync.when(
-                loading: () => const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24.0),
-                    child: CircularProgressIndicator(color: AppColors.primary),
-                  ),
-                ),
+                loading: () =>
+                    const AppListSkeleton(rows: 2, padding: EdgeInsets.zero),
                 error: (_, _) => Center(
                   child: Text(
                     copy.text(
@@ -321,10 +393,18 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(
-                                    icon,
-                                    size: 19,
-                                    color: AppColors.primary,
+                                  Container(
+                                    width: 36,
+                                    height: 36,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.softSurface,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Icon(
+                                      icon,
+                                      size: 18,
+                                      color: AppColors.primary,
+                                    ),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
@@ -340,16 +420,6 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                                             color: AppColors.textPrimary,
                                           ),
                                         ),
-                                        if (contextLabel != null) ...[
-                                          const SizedBox(height: 3),
-                                          Text(
-                                            contextLabel,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: AppColors.textSecondary,
-                                            ),
-                                          ),
-                                        ],
                                         const SizedBox(height: 3),
                                         Text(
                                           FormatUtils.formatDateTime(
@@ -360,24 +430,18 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                                             color: AppColors.textSecondary,
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          copy.walletAmountLabel(tx),
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            color: AppColors.textSecondary,
+                                        if (contextLabel != null) ...[
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            contextLabel,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              color: AppColors.textSecondary,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          copy.walletAmount(tx),
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w800,
-                                            color: isCredit
-                                                ? AppColors.statusSuccessText
-                                                : AppColors.statusDangerText,
-                                          ),
-                                        ),
+                                        ],
                                         if (tx.availableAfter != null)
                                           Text(
                                             '${copy.text('Có thể rút sau giao dịch', 'Available after')}: ${FormatUtils.formatVnd(tx.availableAfter)}',
@@ -387,6 +451,17 @@ class _WalletScreenState extends ConsumerState<WalletScreen> {
                                             ),
                                           ),
                                       ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    copy.walletAmount(tx),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w800,
+                                      color: isCredit
+                                          ? AppColors.primary
+                                          : AppColors.statusDangerText,
                                     ),
                                   ),
                                 ],

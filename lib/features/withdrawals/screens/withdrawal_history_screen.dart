@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/format_utils.dart';
 import '../../../core/widgets/app_card.dart';
@@ -10,10 +11,11 @@ import '../../../core/widgets/status_badge.dart';
 import '../../finance/models/withdrawal_model.dart';
 import '../../finance/repositories/finance_repository.dart';
 
-final withdrawalHistoryProvider = FutureProvider.autoDispose<List<WithdrawalModel>>((ref) {
-  final repo = ref.watch(financeRepositoryProvider);
-  return repo.getWithdrawals(page: 1, limit: 50);
-});
+final withdrawalHistoryProvider =
+    FutureProvider.autoDispose<List<WithdrawalModel>>((ref) {
+      final repo = ref.watch(financeRepositoryProvider);
+      return repo.getWithdrawals(page: 1, limit: 50);
+    });
 
 class WithdrawalHistoryScreen extends ConsumerWidget {
   const WithdrawalHistoryScreen({super.key});
@@ -31,7 +33,11 @@ class WithdrawalHistoryScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 12.0),
             child: TextButton.icon(
               onPressed: () => context.push('/app/withdrawals/new'),
-              icon: const Icon(LucideIcons.plus, size: 16, color: AppColors.primary),
+              icon: const Icon(
+                LucideIcons.plus,
+                size: 16,
+                color: AppColors.primary,
+              ),
               label: const Text(
                 'Rút tiền',
                 style: TextStyle(
@@ -54,7 +60,10 @@ class WithdrawalHistoryScreen extends ConsumerWidget {
             child: CircularProgressIndicator(color: AppColors.primary),
           ),
           error: (err, _) => Center(
-            child: Text('Lỗi: $err', style: const TextStyle(color: AppColors.statusDangerText)),
+            child: const Text(
+              'Không thể tải lịch sử rút tiền. Kéo xuống để thử lại.',
+              style: TextStyle(color: AppColors.statusDangerText),
+            ),
           ),
           data: (withdrawals) {
             if (withdrawals.isEmpty) {
@@ -93,13 +102,20 @@ class WithdrawalHistoryScreen extends ConsumerWidget {
                               color: AppColors.textPrimary,
                             ),
                           ),
-                          StatusBadge(status: item.status, domain: StatusDomain.withdrawal),
+                          StatusBadge(
+                            status: item.status,
+                            domain: StatusDomain.withdrawal,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(LucideIcons.landmark, size: 14, color: AppColors.textSecondary),
+                          const Icon(
+                            LucideIcons.landmark,
+                            size: 14,
+                            color: AppColors.textSecondary,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             '${item.bankName} (•••• ${item.lastFour})',
@@ -119,7 +135,8 @@ class WithdrawalHistoryScreen extends ConsumerWidget {
                           color: AppColors.textSecondary,
                         ),
                       ),
-                      if (item.reviewReason != null && item.reviewReason!.isNotEmpty) ...[
+                      if (item.reviewReason != null &&
+                          item.reviewReason!.isNotEmpty) ...[
                         const SizedBox(height: 8),
                         Container(
                           padding: const EdgeInsets.all(8),

@@ -27,7 +27,8 @@ class ProductPreview {
     return ProductPreview(
       itemId: json['itemId']?.toString(),
       shopId: json['shopId']?.toString(),
-      productName: json['productName']?.toString() ??
+      productName:
+          json['productName']?.toString() ??
           json['name']?.toString() ??
           'Sản phẩm',
       shopName: json['shopName']?.toString(),
@@ -45,17 +46,20 @@ class GenerateLinkResponse {
   final String? link;
   final String? code;
   final ProductPreview? product;
+  final String? estimatedUserCashbackVnd;
 
   GenerateLinkResponse({
     this.link,
     this.code,
     this.product,
+    this.estimatedUserCashbackVnd,
   });
 
   factory GenerateLinkResponse.fromJson(Map<String, dynamic> json) {
     return GenerateLinkResponse(
       link: json['link'] as String?,
       code: json['code'] as String?,
+      estimatedUserCashbackVnd: json['estimatedUserCashbackVnd']?.toString(),
       product: json['product'] != null
           ? ProductPreview.fromJson(json['product'] as Map<String, dynamic>)
           : null,

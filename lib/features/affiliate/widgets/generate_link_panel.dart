@@ -14,6 +14,7 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/product_thumbnail.dart';
 import '../models/generate_link_model.dart';
 import '../repositories/affiliate_repository.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class GenerateLinkPanel extends ConsumerStatefulWidget {
   const GenerateLinkPanel({super.key});
@@ -81,19 +82,15 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
 
     try {
       final uri = Uri.parse(input);
-      if (!uri.hasScheme || !['http', 'https'].contains(uri.scheme)) {
+      if (uri.scheme != 'https' || uri.userInfo.isNotEmpty || uri.hasPort) {
         setState(() => _formError = 'Link không hợp lệ');
         return false;
       }
 
       final host = uri.host.toLowerCase();
-      final isShopee = _shopeeHosts.any(
-        (h) => host == h || host.endsWith('.$h'),
-      );
-      final isTiktok = host.contains('tiktok.com');
-
-      if (!isShopee && !isTiktok) {
-        setState(() => _formError = 'Chỉ hỗ trợ link Shopee, TikTok hợp lệ');
+      final isShopee = _shopeeHosts.contains(host);
+      if (!isShopee) {
+        setState(() => _formError = AppLocalizations.of(context)!.shopeeOnly);
         return false;
       }
     } catch (_) {
@@ -125,7 +122,7 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
         _result = response;
         _isLoading = false;
       });
-      AppFeedback.success('Tạo link cashback thành công');
+      AppFeedback.success(AppLocalizations.of(context)!.linkSuccess);
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -173,6 +170,7 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
   @override
   Widget build(BuildContext context) {
     final product = _result?.product;
+    final copy = AppLocalizations.of(context)!;
 
     return AppCard(
       child: Column(
@@ -181,11 +179,11 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
           Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: AppColors.softSurface,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(13),
                 ),
                 child: const Icon(
                   LucideIcons.link2,
@@ -193,13 +191,28 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                   color: AppColors.primary,
                 ),
               ),
-              const SizedBox(width: 10),
-              const Text(
-                'Tạo link hoàn tiền',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      copy.linkCardTitle,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      copy.linkCardHint,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -209,7 +222,13 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
           // Input field
           AppTextField(
             controller: _urlController,
-            hintText: 'Dán link Shopee, TikTok vào đây nhé...',
+            prefixIcon: const Icon(
+              LucideIcons.link2,
+              size: 18,
+              color: AppColors.textSecondary,
+            ),
+            hintText: copy.linkPlaceholder,
+            keyboardType: TextInputType.url,
             errorText: _formError,
             onSubmitted: (_) => _generate(),
             suffixIcon: Row(
@@ -217,6 +236,7 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
               children: [
                 if (_urlController.text.isNotEmpty)
                   IconButton(
+                    tooltip: copy.clearLink,
                     icon: const Icon(
                       LucideIcons.xCircle,
                       size: 18,
@@ -226,36 +246,41 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                   ),
                 Padding(
                   padding: const EdgeInsets.only(right: 6.0),
-                  child: InkWell(
-                    onTap: _handlePaste,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.softSurface,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            LucideIcons.clipboardPaste,
-                            size: 14,
-                            color: AppColors.primary,
-                          ),
-                          SizedBox(width: 4),
-                          Text(
-                            'Dán',
-                            style: TextStyle(
+                  child: Semantics(
+                    label: copy.pasteLink,
+                    button: true,
+                    child: InkWell(
+                      onTap: _handlePaste,
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 40),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.softSurface,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              LucideIcons.clipboardPaste,
+                              size: 14,
                               color: AppColors.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 4),
+                            Text(
+                              'Dán',
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -267,7 +292,9 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
 
           // Submit CTA Button
           AppButton(
-            text: _isLoading ? 'Đang tạo link...' : 'Mua sắm ngay',
+            text: _isLoading
+                ? copy.creatingCashbackLink
+                : copy.createCashbackLink,
             icon: const Icon(LucideIcons.link, size: 18, color: Colors.white),
             isLoading: _isLoading,
             onPressed: _generate,
@@ -391,9 +418,9 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Số tiền được hoàn lại lên tới',
-                          style: TextStyle(
+                        Text(
+                          copy.estimatedCashback,
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: AppColors.textSecondary,
@@ -401,7 +428,11 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          FormatUtils.formatVnd(product?.commission),
+                          _result?.estimatedUserCashbackVnd == null
+                              ? copy.estimateUnavailable
+                              : FormatUtils.formatVnd(
+                                  _result!.estimatedUserCashbackVnd,
+                                ),
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
@@ -410,9 +441,9 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          'Lưu ý nhỏ: Đây là ước tính tham khảo, con số chính xác sẽ có sau khi Shopee, TikTok xác nhận nhé.',
-                          style: TextStyle(
+                        Text(
+                          copy.estimateNote,
+                          style: const TextStyle(
                             fontSize: 11,
                             color: AppColors.textSecondary,
                             height: 1.3,

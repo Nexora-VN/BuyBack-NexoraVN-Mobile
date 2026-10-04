@@ -7,6 +7,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/format_utils.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_feedback.dart';
+import '../../../core/widgets/app_skeleton.dart';
 import '../../../core/widgets/cashback_progress_stepper.dart';
 import '../../../core/widgets/product_thumbnail.dart';
 import '../../../core/widgets/status_badge.dart';
@@ -50,15 +51,13 @@ class OrderDetailScreen extends ConsumerWidget {
       backgroundColor: AppColors.pageTint,
       appBar: AppBar(title: const Text('Chi tiết đơn hàng')),
       body: orderAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
-        ),
+        loading: () => const OrderDetailSkeleton(),
         error: (err, _) => Center(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Text(
-              'Lỗi tải chi tiết đơn hàng: $err',
-              style: const TextStyle(color: AppColors.statusDangerText),
+            child: const Text(
+              'Không thể tải chi tiết đơn hàng. Vui lòng thử lại.',
+              style: TextStyle(color: AppColors.statusDangerText),
               textAlign: TextAlign.center,
             ),
           ),
@@ -105,7 +104,26 @@ class OrderDetailScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Tiền hoàn của bạn',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        FormatUtils.formatVnd(order.cashbackAmount),
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      const Divider(height: 1, color: Color(0xFFF5E7EB)),
+                      const SizedBox(height: 10),
                       Row(
                         children: [
                           Expanded(
@@ -113,9 +131,9 @@ class OrderDetailScreen extends ConsumerWidget {
                               'Mã đơn: ${order.orderSn}',
                               style: const TextStyle(
                                 fontFamily: 'monospace',
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.textPrimary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ),
@@ -189,7 +207,7 @@ class OrderDetailScreen extends ConsumerWidget {
                       ),
                       const Divider(height: 18),
                       _buildRow(
-                        'Cashback nhận về (85%)',
+                        'Tiền hoàn của bạn',
                         FormatUtils.formatVnd(order.cashbackAmount),
                         isHighlight: true,
                       ),

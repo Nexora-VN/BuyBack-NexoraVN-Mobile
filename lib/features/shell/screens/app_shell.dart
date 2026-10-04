@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class AppShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -11,7 +12,7 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isVietnamese = Localizations.localeOf(context).languageCode == 'vi';
+    final copy = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.pageTint,
       appBar: AppBar(
@@ -19,25 +20,26 @@ class AppShell extends StatelessWidget {
         title: Row(
           children: [
             Image.asset(
-              'assets/images/logo.png',
-              width: 36,
-              height: 36,
+              'assets/images/logo_avatar.png',
+              width: 31,
+              height: 31,
               fit: BoxFit.contain,
+              semanticLabel: 'Logo Piggy Back',
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 7),
             RichText(
               text: const TextSpan(
                 style: TextStyle(
                   fontFamily: 'Be Vietnam Pro',
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
+                  color: AppColors.textPrimary,
                 ),
                 children: [
                   TextSpan(text: 'Piggy '),
                   TextSpan(
                     text: 'Back',
-                    style: TextStyle(color: AppColors.textPrimary),
+                    style: TextStyle(color: AppColors.primary),
                   ),
                 ],
               ),
@@ -47,20 +49,26 @@ class AppShell extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 14.0),
-            child: InkWell(
-              onTap: () => context.push('/app/links/new'),
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: AppColors.softSurface,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  LucideIcons.link2,
-                  size: 20,
-                  color: AppColors.primary,
+            child: Tooltip(
+              message: copy.navAccount,
+              child: InkWell(
+                onTap: () => navigationShell.goBranch(3),
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  width: 38,
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: AppColors.softSurface,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Image.asset(
+                      'assets/images/logo_avatar.png',
+                      fit: BoxFit.contain,
+                      excludeFromSemantics: true,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -81,26 +89,10 @@ class AppShell extends StatelessWidget {
             height: 60,
             child: Row(
               children: [
-                _buildNavItem(
-                  0,
-                  LucideIcons.home,
-                  isVietnamese ? 'Trang chủ' : 'Home',
-                ),
-                _buildNavItem(
-                  1,
-                  LucideIcons.clipboardList,
-                  isVietnamese ? 'Đơn hàng' : 'Orders',
-                ),
-                _buildNavItem(
-                  2,
-                  LucideIcons.walletCards,
-                  isVietnamese ? 'Ví' : 'Wallet',
-                ),
-                _buildNavItem(
-                  3,
-                  LucideIcons.user,
-                  isVietnamese ? 'Tài khoản' : 'Account',
-                ),
+                _buildNavItem(0, LucideIcons.home, copy.navHome),
+                _buildNavItem(1, LucideIcons.clipboardList, copy.navOrders),
+                _buildNavItem(2, LucideIcons.walletCards, copy.navWallet),
+                _buildNavItem(3, LucideIcons.user, copy.navAccount),
               ],
             ),
           ),

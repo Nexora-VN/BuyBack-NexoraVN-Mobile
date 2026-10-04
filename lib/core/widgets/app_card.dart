@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
 
@@ -26,8 +27,15 @@ class AppCard extends StatelessWidget {
         color: backgroundColor ?? AppColors.surfaceContainerLowest,
         borderRadius: AppDimensions.roundedCard,
         border: Border.fromBorderSide(
-          border ?? const BorderSide(color: AppColors.borderSubtle, width: 1.0),
+          border ?? const BorderSide(color: Color(0xFFF5E7EB), width: 1.0),
         ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D4F1B31),
+            blurRadius: 28,
+            offset: Offset(0, 10),
+          ),
+        ],
       ),
       child: child,
     );

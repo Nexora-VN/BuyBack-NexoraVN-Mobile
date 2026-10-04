@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/app_skeleton.dart';
 import '../../../core/widgets/app_feedback.dart';
 import '../../../core/widgets/status_badge.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -113,11 +114,13 @@ class AccountScreen extends ConsumerWidget {
                       color: AppColors.softSurface,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Center(
-                      child: Icon(
-                        LucideIcons.user,
-                        size: 24,
-                        color: AppColors.primary,
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/logo_avatar.png',
+                        width: 43,
+                        height: 43,
+                        fit: BoxFit.contain,
+                        excludeFromSemantics: true,
                       ),
                     ),
                   ),
@@ -132,14 +135,6 @@ class AccountScreen extends ConsumerWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Vai trò: ${authState.user?.role ?? "USER"}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -189,12 +184,8 @@ class AccountScreen extends ConsumerWidget {
 
             // Bank Accounts List
             banksAsync.when(
-              loading: () => const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                ),
-              ),
+              loading: () =>
+                  const AppListSkeleton(rows: 1, padding: EdgeInsets.zero),
               error: (err, _) => AppCard(
                 child: Column(
                   children: [

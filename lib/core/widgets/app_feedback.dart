@@ -6,11 +6,28 @@ import '../network/api_error.dart';
 final appMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 class AppFeedback {
+  static const _apiMessages = {
+    'SHOPEE_LINK_INVALID':
+        'Link Shopee không hợp lệ. Vui lòng kiểm tra và thử lại.',
+    'PROVIDER_PRODUCT_INVALID': 'Chưa đọc được sản phẩm. Vui lòng thử lại.',
+    'INSUFFICIENT_BALANCE': 'Số dư khả dụng không đủ.',
+    'WITHDRAWALS_DISABLED': 'Tính năng rút tiền đang tạm dừng.',
+    'BANK_NOT_APPROVED': 'Tài khoản ngân hàng chưa được duyệt.',
+  };
+
   static String messageFor(
     Object error, {
     String fallback = 'Không thể hoàn tất yêu cầu. Vui lòng thử lại.',
   }) {
     if (error is ApiError) {
+      final translated = _apiMessages[error.code];
+      if (translated != null) return translated;
+      if ([
+        'Invalid credentials',
+        'Invalid email or password',
+      ].contains(error.message)) {
+        return 'Email hoặc mật khẩu không đúng.';
+      }
       if (error.statusCode == 401) {
         return 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';
       }
@@ -20,7 +37,8 @@ class AppFeedback {
       if (error.statusCode == 0) {
         return 'Không thể kết nối. Vui lòng kiểm tra mạng và thử lại.';
       }
-      if (error.message.trim().isNotEmpty) return error.message;
+      // Avoid exposing raw backend codes or English diagnostics in the VI-only release.
+      if (RegExp(r'[À-ỹ]').hasMatch(error.message)) return error.message;
     }
     return fallback;
   }

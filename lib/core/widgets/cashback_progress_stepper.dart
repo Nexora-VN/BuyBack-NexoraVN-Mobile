@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+
 import '../constants/app_colors.dart';
 import '../constants/app_dimensions.dart';
 import '../utils/format_utils.dart';
 import 'app_card.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 class CashbackProgressStepper extends StatelessWidget {
   final String orderStatus;
@@ -21,7 +23,9 @@ class CashbackProgressStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCancelled = [
+    final copy = AppLocalizations.of(context)!;
+    final isCancelled =
+        [
           'REJECTED',
           'FAILED',
           'CANCELLED',
@@ -30,12 +34,11 @@ class CashbackProgressStepper extends StatelessWidget {
         ['REJECTED', 'REVERSED'].contains(commissionState) ||
         ['REJECTED', 'REVERSED'].contains(cashbackState ?? '');
 
-    final isWithdrawn = ['PAID', 'WITHDRAWN'].contains(cashbackState ?? '') ||
-        commissionState == 'PAID';
+    final isAvailable =
+        cashbackState == 'AVAILABLE' || commissionState == 'PAID';
 
-    final isAvailable = isWithdrawn || cashbackState == 'AVAILABLE';
-
-    final isOrderCompleted = isAvailable ||
+    final isOrderCompleted =
+        isAvailable ||
         [
           'VALIDATED',
           'COMPLETED',
@@ -57,7 +60,11 @@ class CashbackProgressStepper extends StatelessWidget {
         child: const Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(LucideIcons.alertCircle, size: 20, color: AppColors.statusDangerText),
+            Icon(
+              LucideIcons.alertCircle,
+              size: 20,
+              color: AppColors.statusDangerText,
+            ),
             SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -110,14 +117,10 @@ class CashbackProgressStepper extends StatelessWidget {
         current: isOrderCompleted && !isAvailable && !isCancelled,
       ),
       _StepData(
-        title: isWithdrawn ? 'Đã rút tiền' : 'Tiền vào ví',
-        desc: isWithdrawn
-            ? 'Đã chuyển về ngân hàng'
-            : isAvailable
-                ? 'Sẵn sàng rút tiền'
-                : 'Chờ hoàn tất đối soát',
-        done: isWithdrawn || isAvailable,
-        current: isAvailable && !isWithdrawn && !isCancelled,
+        title: 'Tiền vào ví',
+        desc: isAvailable ? copy.walletReady : copy.awaitingWallet,
+        done: isAvailable,
+        current: false,
       ),
     ];
 
@@ -138,31 +141,19 @@ class CashbackProgressStepper extends StatelessWidget {
                   letterSpacing: 0.5,
                 ),
               ),
-              if (isWithdrawn)
-                const Row(
+              if (isAvailable)
+                Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(LucideIcons.arrowDownToLine, size: 13, color: AppColors.statusInfoText),
-                    SizedBox(width: 4),
-                    Text(
-                      'Đã rút tiền',
-                      style: TextStyle(
-                        color: AppColors.statusInfoText,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Icon(
+                      LucideIcons.check,
+                      size: 13,
+                      color: AppColors.statusSuccessText,
                     ),
-                  ],
-                )
-              else if (isAvailable)
-                const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(LucideIcons.check, size: 13, color: AppColors.statusSuccessText),
                     SizedBox(width: 4),
                     Text(
-                      'Sẵn sàng rút',
-                      style: TextStyle(
+                      copy.creditedToWallet,
+                      style: const TextStyle(
                         color: AppColors.statusSuccessText,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -174,7 +165,11 @@ class CashbackProgressStepper extends StatelessWidget {
                 const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(LucideIcons.clock3, size: 13, color: AppColors.statusPendingText),
+                    Icon(
+                      LucideIcons.clock3,
+                      size: 13,
+                      color: AppColors.statusPendingText,
+                    ),
                     SizedBox(width: 4),
                     Text(
                       'Đang đối soát',
@@ -206,44 +201,40 @@ class CashbackProgressStepper extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: step.done
-                                ? (isWithdrawn && index == 3
-                                    ? AppColors.statusInfoText
-                                    : AppColors.statusSuccessText)
+                                ? AppColors.statusSuccessText
                                 : step.current
-                                    ? AppColors.statusPendingBg
-                                    : AppColors.pageTint,
+                                ? AppColors.statusPendingBg
+                                : AppColors.pageTint,
                             border: Border.all(
                               color: step.done
                                   ? Colors.transparent
                                   : step.current
-                                      ? AppColors.statusPendingText
-                                      : AppColors.borderSubtle,
+                                  ? AppColors.statusPendingText
+                                  : AppColors.borderSubtle,
                               width: step.current ? 2.0 : 1.0,
                             ),
                           ),
                           child: Center(
                             child: step.done
-                                ? Icon(
-                                    isWithdrawn && index == 3
-                                        ? LucideIcons.arrowDownToLine
-                                        : LucideIcons.check,
+                                ? const Icon(
+                                    LucideIcons.check,
                                     size: 13,
                                     color: Colors.white,
                                   )
                                 : step.current
-                                    ? const Icon(
-                                        LucideIcons.clock3,
-                                        size: 12,
-                                        color: AppColors.statusPendingText,
-                                      )
-                                    : Text(
-                                        '${index + 1}',
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textDisabled,
-                                        ),
-                                      ),
+                                ? const Icon(
+                                    LucideIcons.clock3,
+                                    size: 12,
+                                    color: AppColors.statusPendingText,
+                                  )
+                                : Text(
+                                    '${index + 1}',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textDisabled,
+                                    ),
+                                  ),
                           ),
                         ),
                         if (!isLast)
@@ -252,7 +243,9 @@ class CashbackProgressStepper extends StatelessWidget {
                               width: 2,
                               margin: const EdgeInsets.symmetric(vertical: 4),
                               color: step.done
-                                  ? AppColors.statusSuccessText.withValues(alpha: 0.3)
+                                  ? AppColors.statusSuccessText.withValues(
+                                      alpha: 0.3,
+                                    )
                                   : AppColors.borderSubtle,
                             ),
                           ),
@@ -271,12 +264,10 @@ class CashbackProgressStepper extends StatelessWidget {
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: step.done
-                                    ? (isWithdrawn && index == 3
-                                        ? AppColors.statusInfoText
-                                        : AppColors.statusSuccessText)
+                                    ? AppColors.statusSuccessText
                                     : step.current
-                                        ? AppColors.statusPendingText
-                                        : AppColors.textDisabled,
+                                    ? AppColors.statusPendingText
+                                    : AppColors.textDisabled,
                               ),
                             ),
                             const SizedBox(height: 2),

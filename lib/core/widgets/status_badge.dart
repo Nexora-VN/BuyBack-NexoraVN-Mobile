@@ -41,7 +41,7 @@ class StatusBadge extends StatelessWidget {
     'ESTIMATED': 'Hoa hồng dự kiến',
     'MANUAL_REVIEW': 'Cần đối chiếu',
     'PARTIALLY_VALIDATED': 'Hoàn thành một phần',
-    'PAID': 'Đã rút tiền',
+    'PAID': 'Đã quyết toán',
     'REVERSED': 'Đã thu hồi',
     'APPROVED': 'Đã duyệt',
     'CANCELLED': 'Đã hủy',
@@ -69,7 +69,7 @@ class StatusBadge extends StatelessWidget {
       'PENDING': 'Chờ xác nhận',
       'VALIDATED': 'Chờ đối soát',
       'AVAILABLE': 'Có thể rút',
-      'PAID': 'Đã rút tiền',
+      'PAID': 'Có thể rút',
       'WITHDRAWN': 'Đã rút tiền',
     },
     StatusDomain.withdrawal: {
@@ -98,12 +98,9 @@ class StatusBadge extends StatelessWidget {
     Color bgColor;
     IconData icon;
 
-    // 1. Blue (info): Withdrawn / Paid
+    // Commission PAID means settlement into the wallet, not a bank withdrawal.
     final isWithdrawn =
-        ['PAID', 'WITHDRAWN'].contains(status) ||
-        text == 'Đã rút tiền' ||
-        text == 'Đã chuyển tiền' ||
-        text == 'Đã quyết toán' ||
+        status == 'WITHDRAWN' ||
         (domain == StatusDomain.withdrawal && status == 'COMPLETED');
 
     // 2. Red (danger): Failed / Rejected / Cancelled
@@ -129,6 +126,7 @@ class StatusBadge extends StatelessWidget {
               'ACTIVE',
               'WORKING',
               'AVAILABLE',
+              'PAID',
               'COMPLETED',
               'VALIDATED',
               'APPROVED',

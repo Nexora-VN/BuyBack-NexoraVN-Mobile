@@ -146,7 +146,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
               ),
               error: (err, _) => Center(
                 child: Text(
-                  'Lỗi: $err',
+                  'Không thể tải số dư. Vui lòng thử lại.',
                   style: const TextStyle(color: AppColors.statusDangerText),
                 ),
               ),
@@ -157,7 +157,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                   ),
                   error: (err, _) => Center(
                     child: Text(
-                      'Lỗi: $err',
+                      'Không thể tải tài khoản ngân hàng. Vui lòng thử lại.',
                       style: const TextStyle(color: AppColors.statusDangerText),
                     ),
                   ),
@@ -329,7 +329,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                                   style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w800,
-                                    color: AppColors.primary,
+                                    color: AppColors.textPrimary,
                                   ),
                                 ),
                               ],

@@ -139,13 +139,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Brand Shield/Logo
                   Center(
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                      width: 68,
-                      height: 68,
-                      fit: BoxFit.contain,
+                    child: RichText(
+                      text: const TextSpan(
+                        style: TextStyle(
+                          fontFamily: 'Be Vietnam Pro',
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.textPrimary,
+                        ),
+                        children: [
+                          TextSpan(text: 'Piggy '),
+                          TextSpan(
+                            text: 'Back',
+                            style: TextStyle(color: AppColors.primary),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 16),
