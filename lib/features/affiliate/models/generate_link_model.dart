@@ -9,6 +9,11 @@ class ProductPreview {
   final dynamic rating;
   final dynamic historicalSold;
   final bool isExtra;
+  final dynamic sellerRatePercent;
+  final dynamic shopeeRatePercent;
+  final dynamic totalRatePercent;
+  final dynamic sellerRate;
+  final dynamic shopeeRate;
 
   ProductPreview({
     this.itemId,
@@ -21,6 +26,11 @@ class ProductPreview {
     this.rating,
     this.historicalSold,
     this.isExtra = false,
+    this.sellerRatePercent,
+    this.shopeeRatePercent,
+    this.totalRatePercent,
+    this.sellerRate,
+    this.shopeeRate,
   });
 
   factory ProductPreview.fromJson(Map<String, dynamic> json) {
@@ -38,6 +48,11 @@ class ProductPreview {
       rating: json['rating'],
       historicalSold: json['historicalSold'],
       isExtra: json['isExtra'] == true,
+      sellerRatePercent: json['sellerRatePercent'],
+      shopeeRatePercent: json['shopeeRatePercent'],
+      totalRatePercent: json['totalRatePercent'],
+      sellerRate: json['sellerRate'],
+      shopeeRate: json['shopeeRate'],
     );
   }
 }
@@ -63,6 +78,7 @@ class GenerateLinkResponse {
       product: json['product'] != null
           ? ProductPreview.fromJson(json['product'] as Map<String, dynamic>)
           : null,
+      estimatedUserCashbackVnd: json['estimatedUserCashbackVnd']?.toString(),
     );
   }
 }
