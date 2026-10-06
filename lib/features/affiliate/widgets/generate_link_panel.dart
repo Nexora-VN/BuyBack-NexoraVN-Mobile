@@ -215,37 +215,40 @@ class _GenerateLinkPanelState extends ConsumerState<GenerateLinkPanel> {
                   ],
                 ),
               ),
-              const Spacer(),
-              InkWell(
-                onTap: () => _showGuideSliderSheet(context),
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: AppColors.softSurface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.borderSubtle),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(LucideIcons.helpCircle, size: 14, color: AppColors.primary),
-                      SizedBox(width: 4),
-                      Text(
-                        'Hướng dẫn',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 14),
+
+          // Guide link button (mimicking Web)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: InkWell(
+              onTap: () => _showGuideSliderSheet(context),
+              borderRadius: BorderRadius.circular(6),
+              child: const Padding(
+                padding: EdgeInsets.only(bottom: 8, top: 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      LucideIcons.helpCircle,
+                      size: 15,
+                      color: AppColors.primary,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      'Cách lấy link?',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
 
           // Input field
           AppTextField(
@@ -850,8 +853,9 @@ class _GuideSliderBottomSheetState extends State<_GuideSliderBottomSheet> {
   ];
 
   @override
-  void disposeWidget() {
+  void dispose() {
     _pageController.dispose();
+    super.dispose();
   }
 
   @override

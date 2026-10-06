@@ -21,14 +21,10 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardContent = Container(
-      padding: padding,
+    final content = Padding(padding: padding, child: child);
+    return Container(
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.surfaceContainerLowest,
         borderRadius: AppDimensions.roundedCard,
-        border: Border.fromBorderSide(
-          border ?? const BorderSide(color: Color(0xFFF5E7EB), width: 1.0),
-        ),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0D4F1B31),
@@ -37,21 +33,16 @@ class AppCard extends StatelessWidget {
           ),
         ],
       ),
-      child: child,
-    );
-
-    if (onTap != null) {
-      return Material(
-        color: Colors.transparent,
-        borderRadius: AppDimensions.roundedCard,
-        child: InkWell(
-          onTap: onTap,
+      child: Material(
+        color: backgroundColor ?? AppColors.surfaceContainerLowest,
+        shape: RoundedRectangleBorder(
           borderRadius: AppDimensions.roundedCard,
-          child: cardContent,
+          side:
+              border ?? const BorderSide(color: Color(0xFFF5E7EB), width: 1.0),
         ),
-      );
-    }
-
-    return cardContent;
+        clipBehavior: Clip.antiAlias,
+        child: onTap == null ? content : InkWell(onTap: onTap, child: content),
+      ),
+    );
   }
 }

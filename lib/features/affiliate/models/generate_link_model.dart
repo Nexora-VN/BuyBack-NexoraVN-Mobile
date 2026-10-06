@@ -78,7 +78,6 @@ class GenerateLinkResponse {
       product: json['product'] != null
           ? ProductPreview.fromJson(json['product'] as Map<String, dynamic>)
           : null,
-      estimatedUserCashbackVnd: json['estimatedUserCashbackVnd']?.toString(),
     );
   }
 }
