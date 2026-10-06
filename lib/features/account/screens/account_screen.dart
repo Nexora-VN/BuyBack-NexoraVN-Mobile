@@ -32,7 +32,7 @@ class AccountScreen extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Gỡ tài khoản ngân hàng?'),
+        title: const Text('Gỡ nơi nhận tiền?'),
         content: const Text(
           'Bạn có chắc chắn muốn gỡ tài khoản này? Các yêu cầu rút tiền đã tạo trước đó vẫn giữ nguyên thông tin.',
         ),
@@ -56,7 +56,7 @@ class AccountScreen extends ConsumerWidget {
       try {
         await ref.read(financeRepositoryProvider).deleteBankAccount(id);
         ref.invalidate(bankAccountsProvider);
-        AppFeedback.success('Đã gỡ tài khoản ngân hàng');
+        AppFeedback.success('Đã gỡ nơi nhận tiền');
       } catch (e) {
         AppFeedback.error(
           e,
@@ -93,7 +93,7 @@ class AccountScreen extends ConsumerWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Thông tin cá nhân, liên kết ngân hàng nhận tiền hoàn và cài đặt.',
+                  'Thông tin cá nhân, nơi nhận tiền hoàn và cài đặt.',
                   style: TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,
@@ -150,7 +150,7 @@ class AccountScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'TÀI KHOẢN NGÂN HÀNG',
+                  'NƠI NHẬN TIỀN',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -192,7 +192,7 @@ class AccountScreen extends ConsumerWidget {
                     Text(
                       AppFeedback.messageFor(
                         err,
-                        fallback: 'Không thể tải tài khoản ngân hàng.',
+                        fallback: 'Không thể tải nơi nhận tiền.',
                       ),
                       style: const TextStyle(color: AppColors.statusDangerText),
                     ),
@@ -212,7 +212,7 @@ class AccountScreen extends ConsumerWidget {
                     ),
                     child: Center(
                       child: Text(
-                        'Bạn chưa thêm tài khoản ngân hàng nào. Bấm "Thêm mới" để liên kết tài khoản nhận tiền rút nha!',
+                        'Bạn chưa thêm ngân hàng hoặc MoMo. Bấm "Thêm mới" để thêm nơi nhận tiền rút.',
                         style: TextStyle(
                           fontSize: 13,
                           color: AppColors.textSecondary,
@@ -242,8 +242,10 @@ class AccountScreen extends ConsumerWidget {
                                   color: AppColors.softSurface,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Icon(
-                                  LucideIcons.landmark,
+                                child: Icon(
+                                  bank.bankCode == 'MOMO'
+                                      ? LucideIcons.wallet
+                                      : LucideIcons.landmark,
                                   size: 20,
                                   color: AppColors.primary,
                                 ),

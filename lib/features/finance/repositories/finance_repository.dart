@@ -1,5 +1,10 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:convert';
 
+import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
+
+import '../../../core/config/app_config.dart';
 import '../../../core/network/api_client.dart';
 import '../models/bank_account_model.dart';
 import '../models/cashback_model.dart';
@@ -17,6 +22,31 @@ class FinanceRepository {
   final ApiClient _client;
 
   FinanceRepository(this._client);
+
+  Future<List<BankOption>> getSupportedBanks() async {
+    try {
+      final response = await Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+        ),
+      ).get<dynamic>(AppConfig.bankDirectoryUrl);
+      final rows =
+          (response.data as Map<String, dynamic>)['banks'] as List<dynamic>;
+      if (rows.isEmpty) throw const FormatException('Empty bank directory');
+      return rows
+          .map((item) => BankOption.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      final payload = jsonDecode(
+        await rootBundle.loadString('assets/images/banks/bank-directory.json'),
+      ) as Map<String, dynamic>;
+      final rows = payload['banks'] as List<dynamic>;
+      return rows
+          .map((item) => BankOption.fromJson(item as Map<String, dynamic>))
+          .toList();
+    }
+  }
 
   Future<DashboardModel> getDashboard() async {
     final response = await _client.get('/me/dashboard');
@@ -214,4 +244,25 @@ class FinanceRepository {
   Future<void> deleteBankAccount(String id) async {
     await _client.delete('/me/bank-accounts/$id');
   }
+}
+
+class BankOption {
+  final String code;
+  final String name;
+  final String fullName;
+  final String kind;
+
+  BankOption({
+    required this.code,
+    required this.name,
+    this.fullName = '',
+    this.kind = 'bank',
+  });
+
+  factory BankOption.fromJson(Map<String, dynamic> json) => BankOption(
+    code: json['code'] as String,
+    name: json['name'] as String,
+    fullName: json['fullName'] as String? ?? '',
+    kind: json['kind'] as String? ?? 'bank',
+  );
 }

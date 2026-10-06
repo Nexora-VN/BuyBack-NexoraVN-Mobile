@@ -78,9 +78,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
     }
 
     if (_selectedBankId == null || _selectedBankId!.isEmpty) {
-      setState(
-        () => _bankError = 'Vui lòng chọn tài khoản ngân hàng nhận tiền',
-      );
+      setState(() => _bankError = 'Vui lòng chọn nơi nhận tiền');
       valid = false;
     } else {
       setState(() => _bankError = null);
@@ -157,7 +155,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                   ),
                   error: (err, _) => Center(
                     child: Text(
-                      'Không thể tải tài khoản ngân hàng. Vui lòng thử lại.',
+                      'Không thể tải nơi nhận tiền. Vui lòng thử lại.',
                       style: const TextStyle(color: AppColors.statusDangerText),
                     ),
                   ),
@@ -176,7 +174,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                               ),
                               const SizedBox(height: 14),
                               const Text(
-                                'Chưa có tài khoản ngân hàng đã duyệt',
+                                'Chưa có nơi nhận tiền đã duyệt',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
@@ -185,7 +183,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                               ),
                               const SizedBox(height: 8),
                               const Text(
-                                'Bạn cần liên kết tài khoản ngân hàng và được admin duyệt trước khi rút tiền.',
+                                'Bạn cần thêm ngân hàng hoặc MoMo và được admin duyệt trước khi rút tiền.',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: AppColors.textSecondary,
@@ -194,7 +192,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                               ),
                               const SizedBox(height: 20),
                               AppButton(
-                                text: 'Thêm tài khoản ngân hàng',
+                                text: 'Thêm ngân hàng hoặc MoMo',
                                 onPressed: () {
                                   showAddBankAccountSheet(
                                     context,
@@ -254,17 +252,21 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                                   ),
                                   const Divider(height: 20),
                                   _buildReviewRow(
-                                    'Ngân hàng nhận',
+                                    'Nơi nhận tiền',
                                     selectedBank.bankName,
                                   ),
                                   const Divider(height: 20),
                                   _buildReviewRow(
-                                    'Số tài khoản',
+                                    selectedBank.bankCode == 'MOMO'
+                                        ? 'Số điện thoại ví'
+                                        : 'Số tài khoản',
                                     '•••• ${selectedBank.lastFour}',
                                   ),
                                   const Divider(height: 20),
                                   _buildReviewRow(
-                                    'Chủ tài khoản',
+                                    selectedBank.bankCode == 'MOMO'
+                                        ? 'Chủ ví'
+                                        : 'Chủ tài khoản',
                                     selectedBank.accountHolder,
                                   ),
                                 ],
@@ -362,7 +364,7 @@ class _NewWithdrawalScreenState extends ConsumerState<NewWithdrawalScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text(
-                                      'Tài khoản ngân hàng nhận tiền',
+                                      'Nơi nhận tiền đã duyệt',
                                       style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,

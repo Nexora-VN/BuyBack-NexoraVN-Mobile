@@ -1,0 +1,460 @@
+{
+  "updatedAt": "2026-10-06",
+  "banks": [
+    {
+      "code": "MOMO",
+      "name": "MoMo",
+      "fullName": "Ví MoMo",
+      "logo": "/bank-logos/MOMO.png",
+      "kind": "wallet"
+    },
+    {
+      "code": "ABB",
+      "name": "ABBANK",
+      "fullName": "Ngân hàng TMCP An Bình",
+      "logo": "/bank-logos/ABB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "ACB",
+      "name": "ACB",
+      "fullName": "Ngân hàng TMCP Á Châu",
+      "logo": "/bank-logos/ACB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VBA",
+      "name": "Agribank",
+      "fullName": "Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam",
+      "logo": "/bank-logos/VBA.png",
+      "kind": "bank"
+    },
+    {
+      "code": "BAB",
+      "name": "BacABank",
+      "fullName": "Ngân hàng TMCP Bắc Á",
+      "logo": "/bank-logos/BAB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "BVB",
+      "name": "BaoVietBank",
+      "fullName": "Ngân hàng TMCP Bảo Việt",
+      "logo": "/bank-logos/BVB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "BIDV",
+      "name": "BIDV",
+      "fullName": "Ngân hàng TMCP Đầu tư và Phát triển Việt Nam",
+      "logo": "/bank-logos/BIDV.png",
+      "kind": "bank"
+    },
+    {
+      "code": "CAKE",
+      "name": "CAKE",
+      "fullName": "TMCP Việt Nam Thịnh Vượng - Ngân hàng số CAKE by VPBank",
+      "logo": "/bank-logos/CAKE.png",
+      "kind": "bank"
+    },
+    {
+      "code": "CBB",
+      "name": "CBBank",
+      "fullName": "Ngân hàng Thương mại TNHH MTV Xây dựng Việt Nam",
+      "logo": "/bank-logos/CBB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "CIMB",
+      "name": "CIMB",
+      "fullName": "Ngân hàng TNHH MTV CIMB Việt Nam",
+      "logo": "/bank-logos/CIMB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "CITIBANK",
+      "name": "Citibank",
+      "fullName": "Ngân hàng Citibank, N.A. - Chi nhánh Hà Nội",
+      "logo": "/bank-logos/CITIBANK.png",
+      "kind": "bank"
+    },
+    {
+      "code": "COOPBANK",
+      "name": "COOPBANK",
+      "fullName": "Ngân hàng Hợp tác xã Việt Nam",
+      "logo": "/bank-logos/COOPBANK.png",
+      "kind": "bank"
+    },
+    {
+      "code": "DBS",
+      "name": "DBSBank",
+      "fullName": "DBS Bank Ltd - Chi nhánh Thành phố Hồ Chí Minh",
+      "logo": "/bank-logos/DBS.png",
+      "kind": "bank"
+    },
+    {
+      "code": "EIB",
+      "name": "Eximbank",
+      "fullName": "Ngân hàng TMCP Xuất Nhập khẩu Việt Nam",
+      "logo": "/bank-logos/EIB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "GPB",
+      "name": "GPBank",
+      "fullName": "Ngân hàng Thương mại TNHH MTV Dầu Khí Toàn Cầu",
+      "logo": "/bank-logos/GPB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "HDB",
+      "name": "HDBank",
+      "fullName": "Ngân hàng TMCP Phát triển Thành phố Hồ Chí Minh",
+      "logo": "/bank-logos/HDB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "HLBVN",
+      "name": "HongLeong",
+      "fullName": "Ngân hàng TNHH MTV Hong Leong Việt Nam",
+      "logo": "/bank-logos/HLBVN.png",
+      "kind": "bank"
+    },
+    {
+      "code": "HSBC",
+      "name": "HSBC",
+      "fullName": "Ngân hàng TNHH MTV HSBC (Việt Nam)",
+      "logo": "/bank-logos/HSBC.png",
+      "kind": "bank"
+    },
+    {
+      "code": "IBK - HCM",
+      "name": "IBKHCM",
+      "fullName": "Ngân hàng Công nghiệp Hàn Quốc - Chi nhánh TP. Hồ Chí Minh",
+      "logo": null,
+      "kind": "bank"
+    },
+    {
+      "code": "IBK - HN",
+      "name": "IBKHN",
+      "fullName": "Ngân hàng Công nghiệp Hàn Quốc - Chi nhánh Hà Nội",
+      "logo": null,
+      "kind": "bank"
+    },
+    {
+      "code": "IVB",
+      "name": "IndovinaBank",
+      "fullName": "Ngân hàng TNHH Indovina",
+      "logo": "/bank-logos/IVB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "KBank",
+      "name": "KBank",
+      "fullName": "Ngân hàng Đại chúng TNHH Kasikornbank",
+      "logo": "/bank-logos/KBank.png",
+      "kind": "bank"
+    },
+    {
+      "code": "KEBHANAHCM",
+      "name": "KEBHanaHCM",
+      "fullName": "Ngân hàng KEB Hana – Chi nhánh Thành phố Hồ Chí Minh",
+      "logo": "/bank-logos/KEBHANAHCM.png",
+      "kind": "bank"
+    },
+    {
+      "code": "KEBHANAHN",
+      "name": "KEBHANAHN",
+      "fullName": "Ngân hàng KEB Hana – Chi nhánh Hà Nội",
+      "logo": "/bank-logos/KEBHANAHN.png",
+      "kind": "bank"
+    },
+    {
+      "code": "KLB",
+      "name": "KienLongBank",
+      "fullName": "Ngân hàng TMCP Kiên Long",
+      "logo": "/bank-logos/KLB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "KBHCM",
+      "name": "KookminHCM",
+      "fullName": "Ngân hàng Kookmin - Chi nhánh Thành phố Hồ Chí Minh",
+      "logo": "/bank-logos/KBHCM.png",
+      "kind": "bank"
+    },
+    {
+      "code": "KBHN",
+      "name": "KookminHN",
+      "fullName": "Ngân hàng Kookmin - Chi nhánh Hà Nội",
+      "logo": "/bank-logos/KBHN.png",
+      "kind": "bank"
+    },
+    {
+      "code": "LPB",
+      "name": "LPBank",
+      "fullName": "Ngân hàng TMCP Lộc Phát Việt Nam",
+      "logo": "/bank-logos/LPB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "MAFC",
+      "name": "MAFC",
+      "fullName": "Công ty Tài chính TNHH MTV Mirae Asset (Việt Nam) ",
+      "logo": "/bank-logos/MAFC.png",
+      "kind": "bank"
+    },
+    {
+      "code": "MB",
+      "name": "MBBank",
+      "fullName": "Ngân hàng TMCP Quân đội",
+      "logo": "/bank-logos/MB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "MBV",
+      "name": "MBV",
+      "fullName": "Ngân hàng TNHH MTV Việt Nam Hiện Đại",
+      "logo": "/bank-logos/MBV.png",
+      "kind": "bank"
+    },
+    {
+      "code": "MSB",
+      "name": "MSB",
+      "fullName": "Ngân hàng TMCP Hàng Hải Việt Nam",
+      "logo": "/bank-logos/MSB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "NAB",
+      "name": "NamABank",
+      "fullName": "Ngân hàng TMCP Nam Á",
+      "logo": "/bank-logos/NAB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "NCB",
+      "name": "NCB",
+      "fullName": "Ngân hàng TMCP Quốc Dân",
+      "logo": "/bank-logos/NCB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "NHB HN",
+      "name": "Nonghyup",
+      "fullName": "Ngân hàng Nonghyup - Chi nhánh Hà Nội",
+      "logo": null,
+      "kind": "bank"
+    },
+    {
+      "code": "OCB",
+      "name": "OCB",
+      "fullName": "Ngân hàng TMCP Phương Đông",
+      "logo": "/bank-logos/OCB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "PGB",
+      "name": "PGBank",
+      "fullName": "Ngân hàng TMCP Thịnh vượng và Phát triển",
+      "logo": "/bank-logos/PGB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "PBVN",
+      "name": "PublicBank",
+      "fullName": "Ngân hàng TNHH MTV Public Việt Nam",
+      "logo": "/bank-logos/PBVN.png",
+      "kind": "bank"
+    },
+    {
+      "code": "PVCB",
+      "name": "PVcomBank",
+      "fullName": "Ngân hàng TMCP Đại Chúng Việt Nam",
+      "logo": "/bank-logos/PVCB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "PVDB",
+      "name": "PVcomBank Pay",
+      "fullName": "Ngân hàng TMCP Đại Chúng Việt Nam Ngân hàng số",
+      "logo": "/bank-logos/PVDB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "STB",
+      "name": "Sacombank",
+      "fullName": "Ngân hàng TMCP Sài Gòn Thương Tín",
+      "logo": "/bank-logos/STB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "SGICB",
+      "name": "SaigonBank",
+      "fullName": "Ngân hàng TMCP Sài Gòn Công Thương",
+      "logo": "/bank-logos/SGICB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "SCB",
+      "name": "SCB",
+      "fullName": "Ngân hàng TMCP Sài Gòn",
+      "logo": "/bank-logos/SCB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "SEAB",
+      "name": "SeABank",
+      "fullName": "Ngân hàng TMCP Đông Nam Á",
+      "logo": "/bank-logos/SEAB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "SHB",
+      "name": "SHB",
+      "fullName": "Ngân hàng TMCP Sài Gòn - Hà Nội",
+      "logo": "/bank-logos/SHB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "SHBVN",
+      "name": "ShinhanBank",
+      "fullName": "Ngân hàng TNHH MTV Shinhan Việt Nam",
+      "logo": "/bank-logos/SHBVN.png",
+      "kind": "bank"
+    },
+    {
+      "code": "SCVN",
+      "name": "StandardChartered",
+      "fullName": "Ngân hàng TNHH MTV Standard Chartered Bank Việt Nam",
+      "logo": "/bank-logos/SCVN.png",
+      "kind": "bank"
+    },
+    {
+      "code": "TCB",
+      "name": "Techcombank",
+      "fullName": "Ngân hàng TMCP Kỹ thương Việt Nam",
+      "logo": "/bank-logos/TCB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "TIMO",
+      "name": "Timo",
+      "fullName": "Ngân hàng số Timo by Ban Viet Bank (Timo by Ban Viet Bank)",
+      "logo": null,
+      "kind": "bank"
+    },
+    {
+      "code": "TPB",
+      "name": "TPBank",
+      "fullName": "Ngân hàng TMCP Tiên Phong",
+      "logo": "/bank-logos/TPB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "Ubank",
+      "name": "Ubank",
+      "fullName": "TMCP Việt Nam Thịnh Vượng - Ngân hàng số Ubank by VPBank",
+      "logo": "/bank-logos/Ubank.png",
+      "kind": "bank"
+    },
+    {
+      "code": "UOB",
+      "name": "UnitedOverseas",
+      "fullName": "Ngân hàng United Overseas - Chi nhánh TP. Hồ Chí Minh",
+      "logo": "/bank-logos/UOB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VBSP",
+      "name": "VBSP",
+      "fullName": "Ngân hàng Chính sách Xã hội",
+      "logo": "/bank-logos/VBSP.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VIB",
+      "name": "VIB",
+      "fullName": "Ngân hàng TMCP Quốc tế Việt Nam",
+      "logo": "/bank-logos/VIB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VAB",
+      "name": "VietABank",
+      "fullName": "Ngân hàng TMCP Việt Á",
+      "logo": "/bank-logos/VAB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VIETBANK",
+      "name": "VietBank",
+      "fullName": "Ngân hàng TMCP Việt Nam Thương Tín",
+      "logo": "/bank-logos/VIETBANK.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VCCB",
+      "name": "VietCapitalBank",
+      "fullName": "Ngân hàng TMCP Bản Việt",
+      "logo": "/bank-logos/VCCB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VCB",
+      "name": "Vietcombank",
+      "fullName": "Ngân hàng TMCP Ngoại Thương Việt Nam",
+      "logo": "/bank-logos/VCB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "ICB",
+      "name": "VietinBank",
+      "fullName": "Ngân hàng TMCP Công thương Việt Nam",
+      "logo": "/bank-logos/ICB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VTLMONEY",
+      "name": "ViettelMoney",
+      "fullName": "Tổng Công ty Dịch vụ số Viettel - Chi nhánh tập đoàn công nghiệp viễn thông Quân Đội",
+      "logo": "/bank-logos/VTLMONEY.png",
+      "kind": "bank"
+    },
+    {
+      "code": "Vikki",
+      "name": "Vikki",
+      "fullName": "Ngân hàng TNHH MTV Số Vikki",
+      "logo": "/bank-logos/Vikki.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VNPTMONEY",
+      "name": "VNPTMoney",
+      "fullName": "VNPT Money",
+      "logo": "/bank-logos/VNPTMONEY.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VPB",
+      "name": "VPBank",
+      "fullName": "Ngân hàng TMCP Việt Nam Thịnh Vượng",
+      "logo": "/bank-logos/VPB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "VRB",
+      "name": "VRB",
+      "fullName": "Ngân hàng Liên doanh Việt - Nga",
+      "logo": "/bank-logos/VRB.png",
+      "kind": "bank"
+    },
+    {
+      "code": "WVN",
+      "name": "Woori",
+      "fullName": "Ngân hàng TNHH MTV Woori Việt Nam",
+      "logo": "/bank-logos/WVN.png",
+      "kind": "bank"
+    }
+  ]
+}
