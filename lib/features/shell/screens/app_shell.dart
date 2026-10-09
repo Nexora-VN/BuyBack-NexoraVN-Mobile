@@ -17,34 +17,13 @@ class AppShell extends StatelessWidget {
       backgroundColor: AppColors.pageTint,
       appBar: AppBar(
         titleSpacing: 16,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/images/logo_avatar.png',
-              width: 31,
-              height: 31,
-              fit: BoxFit.contain,
-              semanticLabel: 'Logo Piggy Back',
-            ),
-            const SizedBox(width: 7),
-            RichText(
-              text: const TextSpan(
-                style: TextStyle(
-                  fontFamily: 'Be Vietnam Pro',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                ),
-                children: [
-                  TextSpan(text: 'Piggy '),
-                  TextSpan(
-                    text: 'Back',
-                    style: TextStyle(color: AppColors.primary),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        title: Image.asset(
+          'assets/images/brand_horizontal.png',
+          width: 136,
+          height: 56,
+          fit: BoxFit.contain,
+          alignment: Alignment.centerLeft,
+          semanticLabel: 'Logo Piggy Back',
         ),
         actions: [
           Padding(
